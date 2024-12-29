@@ -1,3 +1,3 @@
-# YanStack
+# KindStack (WIP)
 
-A backend starter in Rust with an ergonomic APIs and architecture, documented, tested, and set up with all of necessary infrastructure to quickstart your distributed solution.
+Kickstart your distributed solution with ergonomic, extensible, and fully documented Rust APIs. Own your all of your infrastructure; KindStack's architecture is made for self-hosting on a VPS, using an orchestrator like Docker Compose, Swarm, or Kubernetes. It is NOT built to work with serverless and cloud-dependent philosophies.
