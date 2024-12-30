@@ -1,11 +1,11 @@
 use axum::{http::StatusCode, Json};
 
-use crate::dtos::CreateUserResponse;
+use crate::dtos::RegisterResponsePayload;
 
-pub async fn create_user() -> (StatusCode, Json<CreateUserResponse>) {
+pub async fn register_handler() -> (StatusCode, Json<RegisterResponsePayload>) {
     (
         StatusCode::CREATED,
-        Json(CreateUserResponse {
+        Json(RegisterResponsePayload {
             user_id: String::from(""),
         }),
     )

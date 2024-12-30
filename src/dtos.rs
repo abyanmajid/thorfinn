@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize)]
-pub struct CreateUserResponse {
+pub struct RegisterResponsePayload {
     pub user_id: String,
 }

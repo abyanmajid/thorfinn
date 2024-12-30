@@ -1,11 +1,12 @@
-use axum::{routing::get, Router};
-use handlers::create_user;
+use axum::Router;
+use routes::{create_auth_routes, create_session_routes, create_user_routes};
 use serde::Deserialize;
 use sqlx::postgres::PgPoolOptions;
 
 mod dtos;
 mod entities;
 mod handlers;
+mod routes;
 
 #[derive(Deserialize, Debug)]
 struct EnvironmentVariables {
@@ -31,10 +32,14 @@ async fn main() {
         std::process::exit(1);
     }
 
-    let routes = Router::new().route("/:id", get(create_user));
-
-    let app = Router::new().nest("/api", routes);
+    // Initialize API routes
+    let routes = Router::new()
+        .merge(create_auth_routes())
+        .merge(create_user_routes())
+        .merge(create_session_routes());
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080").await.unwrap();
-    axum::serve(listener, app).await.unwrap();
+    axum::serve(listener, Router::new().nest("/api", routes))
+        .await
+        .unwrap();
 }
