@@ -23,3 +23,12 @@ stop-cm: stop-compose-mysql
 
 tv:
 	go mod tidy && go mod vendor
+
+migrate-up:
+	goose -dir sql/migrations postgres postgresql://clyde:clyde@localhost:5432/clyde up
+
+migrate-down:
+	goose -dir sql/migrations postgres postgresql://clyde:clyde@localhost:5432/clyde down
+
+test:
+	go test ./...
