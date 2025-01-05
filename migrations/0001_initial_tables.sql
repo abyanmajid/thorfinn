@@ -1,53 +1,62 @@
-CREATE TYPE user_role AS ENUM ('user', 'admin');
-CREATE TYPE auth_method AS ENUM ('password', 'oauth', 'webauthn');
+CREATE TABLE IF NOT EXISTS nova_user (
+    id TEXT NOT NULL PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    password_hash TEXT NOT NULL,
+    recovery_code TEXT NOT NULL
+) STRICT;
 
--- Users table for storing primary user information
-CREATE TABLE openyan_users (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
-    email VARCHAR(128) UNIQUE NOT NULL,
-    password VARCHAR(256), -- Nullable for OAuth users
-    role user_role NOT NULL DEFAULT 'user',
-    is_banned BOOLEAN NOT NULL DEFAULT false,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    CONSTRAINT email_or_password CHECK (
-        (email IS NOT NULL AND password IS NOT NULL) OR 
-        (email IS NOT NULL AND password IS NULL) -- Allow OAuth with email only
-    )
-);
+CREATE TABLE IF NOT EXISTS nova_user_email_verification_request (
+    user_id TEXT NOT NULL UNIQUE PRIMARY KEY REFERENCES nova_user(id),
+    created_at INTEGER NOT NULL,
+    expires_at INTEGER NOT NULL,
+    code TEXT NOT NULL
+) STRICT;
 
-CREATE UNIQUE INDEX openyan_users_email_idx ON openyan_users (email);
+CREATE TABLE IF NOT EXISTS nova_email_update_request (
+    id TEXT NOT NULL PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES nova_user(id),
+    created_at INTEGER NOT NULL,
+    expires_at INTEGER NOT NULL,
+    email TEXT NOT NULL,
+    code TEXT NOT NULL
+) STRICT;
 
--- Authentication methods, e.g., for OAuth, 2FA, or WebAuthn
-CREATE TABLE openyan_auth_methods (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
-    user_id UUID REFERENCES openyan_users(id) ON DELETE CASCADE,
-    method auth_method NOT NULL,
-    provider VARCHAR(128), -- For OAuth: 'google', 'github', etc.
-    provider_id VARCHAR(256), -- External provider user ID
-    secret VARCHAR(512), -- For TOTP secrets, etc.
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    UNIQUE(user_id, method, provider) -- Prevent duplicate methods per user
-);
+CREATE INDEX IF NOT EXISTS nova_email_update_request_user_id_index ON nova_email_update_request(user_id);
 
--- Two-factor authentication tokens (OTP for email, SMS, etc.)
-CREATE TABLE openyan_2fa_tokens (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
-    user_id UUID REFERENCES openyan_users(id) ON DELETE CASCADE,
-    token VARCHAR(6) NOT NULL, -- OTP code
-    method auth_method NOT NULL, -- 'authenticator', 'email', 'sms'
-    expires_at TIMESTAMP NOT NULL,
-    used BOOLEAN NOT NULL DEFAULT false,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL
-);
+CREATE TABLE IF NOT EXISTS nova_password_reset_request (
+    id TEXT NOT NULL PRIMARY KEY,
+    user_id TEXT NOT NULL REFERENCES nova_user(id),
+    created_at INTEGER NOT NULL,
+    expires_at INTEGER NOT NULL,
+    code_hash TEXT NOT NULL
+) STRICT;
 
--- Sessions table for managing JWT or database sessions
-CREATE TABLE openyan_sessions (
-    id UUID DEFAULT gen_random_uuid() PRIMARY KEY NOT NULL,
-    user_id UUID REFERENCES openyan_users(id) ON DELETE CASCADE,
-    user_agent TEXT,
-    expires_at TIMESTAMP NOT NULL,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
-);
+CREATE INDEX IF NOT EXISTS nova_password_reset_request_user_id_index ON nova_password_reset_request(user_id);
+
+CREATE TABLE IF NOT EXISTS nova_user_totp_credential (
+    user_id TEXT NOT NULL PRIMARY KEY REFERENCES nova_user(id),
+    created_at INTEGER NOT NULL,
+    key BLOB NULL
+) STRICT;
+
+CREATE TABLE IF NOT EXISTS nova_passkey_credential (
+    id TEXT NOT NULL,
+    user_id TEXT NOT NULL REFERENCES nova_user(id),
+    name TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    cose_algorithm_id INTEGER NOT NULL,
+    public_key BLOB NULL
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS nova_passkey_credential_user_id_index ON nova_passkey_credential(user_id);
+
+CREATE TABLE IF NOT EXISTS nova_security_key (
+    id TEXT NOT NULL,
+    user_id TEXT NOT NULL REFERENCES nova_user(id),
+    name TEXT NOT NULL,
+    created_at INTEGER NOT NULL,
+    cose_algorithm_id INTEGER NOT NULL,
+    public_key BLOB NULL
+) STRICT;
+
+CREATE INDEX IF NOT EXISTS nova_security_key_user_id_index ON nova_security_key(user_id);
