@@ -1,6 +1,6 @@
 # Clyde Novus
 
-[📦 Documentation](#) | [🌿 Node.js Client SDK (NPM)](#) | [📃 REST API Reference](#)
+📦 [Documentation](#) | 🌿 [Node.js Client SDK (NPM)](#) | 📃 [REST API Reference](#)
 
 Novus is a simple, framework-agnostic, Go-extensible auth server with everything you need to secure your applications:
 
