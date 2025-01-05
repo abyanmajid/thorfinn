@@ -10,14 +10,28 @@ import (
 )
 
 type Env struct {
+	ENVIRONMENT  string
 	PORT         int
 	DATABASE_URL string
 }
 
 func LoadEnv() (*Env, error) {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
+	env := "production"
+	for _, arg := range os.Args {
+		if arg == "--env=development" || arg == "-e=development" {
+			env = "development"
+			break
+		} else if arg == "--env=production" || arg == "-e=production" {
+			env = "production"
+			break
+		}
+	}
+
+	if env == "development" {
+		err := godotenv.Load()
+		if err != nil {
+			log.Fatal("Error loading .env file")
+		}
 	}
 
 	portStr := os.Getenv("PORT")

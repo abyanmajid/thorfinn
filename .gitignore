@@ -10,6 +10,8 @@
 
 **/tmp/
 
+novus
+
 # Test binary, built with `go test -c`
 *.test
 
@@ -63,6 +65,7 @@ yarn-error.log*
 next-env.d.ts
 
 **/bin/
+bin/
 **/.swc
 
 **/.idea
