@@ -6,7 +6,7 @@
 
 **_CAUTION:_** Novus is not yet fully stable and is still being tested against many web vulnerabilities.
 
-One way we're measuring progress in this regard is by going through the OWASP complete list of web threats. You can see our progress [here](#).
+One way we're measuring progress in this regard is by going through the OWASP complete list of web vulnerabilities. You can see our progress [here](#).
 
 ---
 
@@ -40,4 +40,4 @@ WIP.
 
 ## License
 
-WIP.
+Novus is GPL-3.0 (General Public License) licensed.
