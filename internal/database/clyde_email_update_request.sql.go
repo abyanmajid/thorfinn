@@ -7,7 +7,8 @@ package database
 
 import (
 	"context"
-	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const deleteEmailUpdateRequest = `-- name: DeleteEmailUpdateRequest :exec
@@ -16,7 +17,7 @@ WHERE id = $1
 `
 
 func (q *Queries) DeleteEmailUpdateRequest(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteEmailUpdateRequest, id)
+	_, err := q.db.Exec(ctx, deleteEmailUpdateRequest, id)
 	return err
 }
 
@@ -26,7 +27,7 @@ WHERE id = $1
 `
 
 func (q *Queries) FindEmailUpdateRequestById(ctx context.Context, id string) (ClydeEmailUpdateRequest, error) {
-	row := q.db.QueryRowContext(ctx, findEmailUpdateRequestById, id)
+	row := q.db.QueryRow(ctx, findEmailUpdateRequestById, id)
 	var i ClydeEmailUpdateRequest
 	err := row.Scan(
 		&i.ID,
@@ -50,13 +51,13 @@ type InsertEmailUpdateRequestParams struct {
 	UserID    string
 	Column3   interface{}
 	Column4   interface{}
-	ExpiresAt time.Time
+	ExpiresAt pgtype.Timestamptz
 	Email     string
 	Code      string
 }
 
 func (q *Queries) InsertEmailUpdateRequest(ctx context.Context, arg InsertEmailUpdateRequestParams) error {
-	_, err := q.db.ExecContext(ctx, insertEmailUpdateRequest,
+	_, err := q.db.Exec(ctx, insertEmailUpdateRequest,
 		arg.ID,
 		arg.UserID,
 		arg.Column3,
@@ -74,7 +75,7 @@ ORDER BY created_at ASC
 `
 
 func (q *Queries) ListEmailUpdateRequests(ctx context.Context) ([]ClydeEmailUpdateRequest, error) {
-	rows, err := q.db.QueryContext(ctx, listEmailUpdateRequests)
+	rows, err := q.db.Query(ctx, listEmailUpdateRequests)
 	if err != nil {
 		return nil, err
 	}
@@ -95,9 +96,6 @@ func (q *Queries) ListEmailUpdateRequests(ctx context.Context) ([]ClydeEmailUpda
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -115,13 +113,13 @@ WHERE id = $1
 
 type UpdateEmailUpdateRequestParams struct {
 	ID        string
-	ExpiresAt time.Time
+	ExpiresAt pgtype.Timestamptz
 	Email     string
 	Code      string
 }
 
 func (q *Queries) UpdateEmailUpdateRequest(ctx context.Context, arg UpdateEmailUpdateRequestParams) error {
-	_, err := q.db.ExecContext(ctx, updateEmailUpdateRequest,
+	_, err := q.db.Exec(ctx, updateEmailUpdateRequest,
 		arg.ID,
 		arg.ExpiresAt,
 		arg.Email,

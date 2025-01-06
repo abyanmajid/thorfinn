@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"log"
+	"log/slog"
 	"os"
 	"strconv"
 
@@ -16,6 +17,8 @@ type Env struct {
 }
 
 func LoadEnv() (*Env, error) {
+	slog.Debug("Loading environment variables...")
+
 	env := "production"
 	for _, arg := range os.Args {
 		if arg == "--env=development" || arg == "-e=development" {
@@ -26,6 +29,8 @@ func LoadEnv() (*Env, error) {
 			break
 		}
 	}
+
+	slog.Debug(fmt.Sprintf("Configured app to run in %s mode.", env))
 
 	if env == "development" {
 		err := godotenv.Load()
@@ -44,6 +49,8 @@ func LoadEnv() (*Env, error) {
 		}
 		port = parsedPort
 	}
+
+	slog.Debug(fmt.Sprintf("Configured app to run on port %d.", port))
 
 	dbUrl, exists := os.LookupEnv("DATABASE_URL")
 	if !exists {

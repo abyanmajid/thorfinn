@@ -15,7 +15,7 @@ WHERE id = $1
 `
 
 func (q *Queries) DeleteSecurityKey(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deleteSecurityKey, id)
+	_, err := q.db.Exec(ctx, deleteSecurityKey, id)
 	return err
 }
 
@@ -25,7 +25,7 @@ WHERE id = $1
 `
 
 func (q *Queries) FindSecurityKeyById(ctx context.Context, id string) (ClydeSecurityKey, error) {
-	row := q.db.QueryRowContext(ctx, findSecurityKeyById, id)
+	row := q.db.QueryRow(ctx, findSecurityKeyById, id)
 	var i ClydeSecurityKey
 	err := row.Scan(
 		&i.ID,
@@ -55,7 +55,7 @@ type InsertSecurityKeyParams struct {
 }
 
 func (q *Queries) InsertSecurityKey(ctx context.Context, arg InsertSecurityKeyParams) error {
-	_, err := q.db.ExecContext(ctx, insertSecurityKey,
+	_, err := q.db.Exec(ctx, insertSecurityKey,
 		arg.ID,
 		arg.UserID,
 		arg.Name,
@@ -73,7 +73,7 @@ ORDER BY created_at ASC
 `
 
 func (q *Queries) ListSecurityKeys(ctx context.Context) ([]ClydeSecurityKey, error) {
-	rows, err := q.db.QueryContext(ctx, listSecurityKeys)
+	rows, err := q.db.Query(ctx, listSecurityKeys)
 	if err != nil {
 		return nil, err
 	}
@@ -93,9 +93,6 @@ func (q *Queries) ListSecurityKeys(ctx context.Context) ([]ClydeSecurityKey, err
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -120,7 +117,7 @@ type UpdateSecurityKeyParams struct {
 }
 
 func (q *Queries) UpdateSecurityKey(ctx context.Context, arg UpdateSecurityKeyParams) error {
-	_, err := q.db.ExecContext(ctx, updateSecurityKey,
+	_, err := q.db.Exec(ctx, updateSecurityKey,
 		arg.ID,
 		arg.Name,
 		arg.CoseAlgorithmID,

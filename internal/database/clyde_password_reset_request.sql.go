@@ -7,8 +7,19 @@ package database
 
 import (
 	"context"
-	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
+
+const deleteExpiredPasswordResetRequests = `-- name: DeleteExpiredPasswordResetRequests :exec
+DELETE FROM clyde_password_reset_request
+WHERE expires_at <= $1
+`
+
+func (q *Queries) DeleteExpiredPasswordResetRequests(ctx context.Context, expiresAt pgtype.Timestamptz) error {
+	_, err := q.db.Exec(ctx, deleteExpiredPasswordResetRequests, expiresAt)
+	return err
+}
 
 const deletePasswordResetRequest = `-- name: DeletePasswordResetRequest :exec
 DELETE FROM clyde_password_reset_request
@@ -16,7 +27,7 @@ WHERE id = $1
 `
 
 func (q *Queries) DeletePasswordResetRequest(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deletePasswordResetRequest, id)
+	_, err := q.db.Exec(ctx, deletePasswordResetRequest, id)
 	return err
 }
 
@@ -26,7 +37,7 @@ WHERE id = $1
 `
 
 func (q *Queries) FindPasswordResetRequestById(ctx context.Context, id string) (ClydePasswordResetRequest, error) {
-	row := q.db.QueryRowContext(ctx, findPasswordResetRequestById, id)
+	row := q.db.QueryRow(ctx, findPasswordResetRequestById, id)
 	var i ClydePasswordResetRequest
 	err := row.Scan(
 		&i.ID,
@@ -49,12 +60,12 @@ type InsertPasswordResetRequestParams struct {
 	UserID    string
 	Column3   interface{}
 	Column4   interface{}
-	ExpiresAt time.Time
+	ExpiresAt pgtype.Timestamptz
 	CodeHash  string
 }
 
 func (q *Queries) InsertPasswordResetRequest(ctx context.Context, arg InsertPasswordResetRequestParams) error {
-	_, err := q.db.ExecContext(ctx, insertPasswordResetRequest,
+	_, err := q.db.Exec(ctx, insertPasswordResetRequest,
 		arg.ID,
 		arg.UserID,
 		arg.Column3,
@@ -71,7 +82,7 @@ ORDER BY created_at ASC
 `
 
 func (q *Queries) ListPasswordResetRequests(ctx context.Context) ([]ClydePasswordResetRequest, error) {
-	rows, err := q.db.QueryContext(ctx, listPasswordResetRequests)
+	rows, err := q.db.Query(ctx, listPasswordResetRequests)
 	if err != nil {
 		return nil, err
 	}
@@ -91,9 +102,6 @@ func (q *Queries) ListPasswordResetRequests(ctx context.Context) ([]ClydePasswor
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -110,11 +118,11 @@ WHERE id = $1
 
 type UpdatePasswordResetRequestParams struct {
 	ID        string
-	ExpiresAt time.Time
+	ExpiresAt pgtype.Timestamptz
 	CodeHash  string
 }
 
 func (q *Queries) UpdatePasswordResetRequest(ctx context.Context, arg UpdatePasswordResetRequestParams) error {
-	_, err := q.db.ExecContext(ctx, updatePasswordResetRequest, arg.ID, arg.ExpiresAt, arg.CodeHash)
+	_, err := q.db.Exec(ctx, updatePasswordResetRequest, arg.ID, arg.ExpiresAt, arg.CodeHash)
 	return err
 }

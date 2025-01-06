@@ -6,18 +6,19 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/clyde-sh/novus/internal/database"
 	"github.com/clyde-sh/novus/internal/handlers"
 	"github.com/clyde-sh/novus/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
 type NovusAPI struct {
-	port  int
-	dbUrl string
+	port    int
+	queries *database.Queries
 }
 
-func (cfg *NovusAPI) New() chi.Router {
-	authHandlers := handlers.NewAuthHandlers(cfg.dbUrl)
+func (cfg *NovusAPI) NewAPI() chi.Router {
+	authHandlers := handlers.NewAuthHandlers(cfg.queries)
 
 	api := chi.NewRouter()
 	api.Get("/auth/register", authHandlers.RegisterHandler)
@@ -26,25 +27,30 @@ func (cfg *NovusAPI) New() chi.Router {
 }
 
 func main() {
-	slog.Debug("Loading environment variables and registering routes...")
-
 	env, err := utils.LoadEnv()
 	if err != nil {
 		log.Fatalf("Error loading environment variables: %v", err)
 	}
 
-	novus := &NovusAPI{
-		port:  env.PORT,
-		dbUrl: env.DATABASE_URL,
+	queries, err := utils.CreateQueryClient()
+	if err != nil {
+		log.Fatal(err)
 	}
+
+	novus := &NovusAPI{
+		port:    env.PORT,
+		queries: queries,
+	}
+
+	go utils.ScheduleDailyDatabaseCleanUp(queries)
 
 	r := chi.NewRouter()
 
-	r.Mount("/api", novus.New())
+	r.Mount("/api", novus.NewAPI())
 
-	slog.Info("Clyde Noxus API is now running live on port 8080...")
+	slog.Info(fmt.Sprintf("Clyde Noxus API is now running live on port %d...", novus.port))
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", env.PORT), r); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", novus.port), r); err != nil {
 		slog.Error("Failed to start server", "error", err)
 	}
 }

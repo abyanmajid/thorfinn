@@ -15,7 +15,7 @@ WHERE user_id = $1
 `
 
 func (q *Queries) DeleteTotpCredential(ctx context.Context, userID string) error {
-	_, err := q.db.ExecContext(ctx, deleteTotpCredential, userID)
+	_, err := q.db.Exec(ctx, deleteTotpCredential, userID)
 	return err
 }
 
@@ -25,7 +25,7 @@ WHERE user_id = $1
 `
 
 func (q *Queries) FindTotpCredentialByUserId(ctx context.Context, userID string) (ClydeUserTotpCredential, error) {
-	row := q.db.QueryRowContext(ctx, findTotpCredentialByUserId, userID)
+	row := q.db.QueryRow(ctx, findTotpCredentialByUserId, userID)
 	var i ClydeUserTotpCredential
 	err := row.Scan(
 		&i.UserID,
@@ -49,7 +49,7 @@ type InsertTotpCredentialParams struct {
 }
 
 func (q *Queries) InsertTotpCredential(ctx context.Context, arg InsertTotpCredentialParams) error {
-	_, err := q.db.ExecContext(ctx, insertTotpCredential,
+	_, err := q.db.Exec(ctx, insertTotpCredential,
 		arg.UserID,
 		arg.Column2,
 		arg.Column3,
@@ -64,7 +64,7 @@ ORDER BY created_at ASC
 `
 
 func (q *Queries) ListTotpCredentials(ctx context.Context) ([]ClydeUserTotpCredential, error) {
-	rows, err := q.db.QueryContext(ctx, listTotpCredentials)
+	rows, err := q.db.Query(ctx, listTotpCredentials)
 	if err != nil {
 		return nil, err
 	}
@@ -81,9 +81,6 @@ func (q *Queries) ListTotpCredentials(ctx context.Context) ([]ClydeUserTotpCrede
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -104,6 +101,6 @@ type UpdateTotpCredentialParams struct {
 }
 
 func (q *Queries) UpdateTotpCredential(ctx context.Context, arg UpdateTotpCredentialParams) error {
-	_, err := q.db.ExecContext(ctx, updateTotpCredential, arg.UserID, arg.Key)
+	_, err := q.db.Exec(ctx, updateTotpCredential, arg.UserID, arg.Key)
 	return err
 }

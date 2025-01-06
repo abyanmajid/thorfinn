@@ -15,7 +15,7 @@ WHERE id = $1
 `
 
 func (q *Queries) DeletePasskeyCredential(ctx context.Context, id string) error {
-	_, err := q.db.ExecContext(ctx, deletePasskeyCredential, id)
+	_, err := q.db.Exec(ctx, deletePasskeyCredential, id)
 	return err
 }
 
@@ -25,7 +25,7 @@ WHERE id = $1
 `
 
 func (q *Queries) FindPasskeyCredentialById(ctx context.Context, id string) (ClydePasskeyCredential, error) {
-	row := q.db.QueryRowContext(ctx, findPasskeyCredentialById, id)
+	row := q.db.QueryRow(ctx, findPasskeyCredentialById, id)
 	var i ClydePasskeyCredential
 	err := row.Scan(
 		&i.ID,
@@ -55,7 +55,7 @@ type InsertPasskeyCredentialParams struct {
 }
 
 func (q *Queries) InsertPasskeyCredential(ctx context.Context, arg InsertPasskeyCredentialParams) error {
-	_, err := q.db.ExecContext(ctx, insertPasskeyCredential,
+	_, err := q.db.Exec(ctx, insertPasskeyCredential,
 		arg.ID,
 		arg.UserID,
 		arg.Name,
@@ -73,7 +73,7 @@ ORDER BY created_at ASC
 `
 
 func (q *Queries) ListPasskeyCredentials(ctx context.Context) ([]ClydePasskeyCredential, error) {
-	rows, err := q.db.QueryContext(ctx, listPasskeyCredentials)
+	rows, err := q.db.Query(ctx, listPasskeyCredentials)
 	if err != nil {
 		return nil, err
 	}
@@ -93,9 +93,6 @@ func (q *Queries) ListPasskeyCredentials(ctx context.Context) ([]ClydePasskeyCre
 			return nil, err
 		}
 		items = append(items, i)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
@@ -120,7 +117,7 @@ type UpdatePasskeyCredentialParams struct {
 }
 
 func (q *Queries) UpdatePasskeyCredential(ctx context.Context, arg UpdatePasskeyCredentialParams) error {
-	_, err := q.db.ExecContext(ctx, updatePasskeyCredential,
+	_, err := q.db.Exec(ctx, updatePasskeyCredential,
 		arg.ID,
 		arg.Name,
 		arg.CoseAlgorithmID,

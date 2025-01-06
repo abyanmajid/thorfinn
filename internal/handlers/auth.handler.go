@@ -1,14 +1,18 @@
 package handlers
 
-import "net/http"
+import (
+	"net/http"
+
+	"github.com/clyde-sh/novus/internal/database"
+)
 
 type AuthHandlers struct {
-	DbUrl string
+	queries *database.Queries
 }
 
-func NewAuthHandlers(dbUrl string) AuthHandlers {
+func NewAuthHandlers(queries *database.Queries) AuthHandlers {
 	return AuthHandlers{
-		DbUrl: dbUrl,
+		queries: queries,
 	}
 }
 

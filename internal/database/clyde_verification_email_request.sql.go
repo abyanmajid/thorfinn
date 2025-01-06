@@ -7,7 +7,8 @@ package database
 
 import (
 	"context"
-	"time"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const deleteEmailVerificationRequest = `-- name: DeleteEmailVerificationRequest :exec
@@ -16,7 +17,17 @@ WHERE user_id = $1
 `
 
 func (q *Queries) DeleteEmailVerificationRequest(ctx context.Context, userID string) error {
-	_, err := q.db.ExecContext(ctx, deleteEmailVerificationRequest, userID)
+	_, err := q.db.Exec(ctx, deleteEmailVerificationRequest, userID)
+	return err
+}
+
+const deleteExpiredEmailVerificationRequests = `-- name: DeleteExpiredEmailVerificationRequests :exec
+DELETE FROM clyde_email_verification_request
+WHERE expires_at <= $1
+`
+
+func (q *Queries) DeleteExpiredEmailVerificationRequests(ctx context.Context, expiresAt pgtype.Timestamptz) error {
+	_, err := q.db.Exec(ctx, deleteExpiredEmailVerificationRequests, expiresAt)
 	return err
 }
 
@@ -26,7 +37,7 @@ WHERE user_id = $1
 `
 
 func (q *Queries) FindEmailVerificationRequestByUserId(ctx context.Context, userID string) (ClydeEmailVerificationRequest, error) {
-	row := q.db.QueryRowContext(ctx, findEmailVerificationRequestByUserId, userID)
+	row := q.db.QueryRow(ctx, findEmailVerificationRequestByUserId, userID)
 	var i ClydeEmailVerificationRequest
 	err := row.Scan(
 		&i.UserID,
@@ -47,12 +58,12 @@ type InsertEmailVerificationRequestParams struct {
 	UserID    string
 	Column2   interface{}
 	Column3   interface{}
-	ExpiresAt time.Time
+	ExpiresAt pgtype.Timestamptz
 	Code      string
 }
 
 func (q *Queries) InsertEmailVerificationRequest(ctx context.Context, arg InsertEmailVerificationRequestParams) error {
-	_, err := q.db.ExecContext(ctx, insertEmailVerificationRequest,
+	_, err := q.db.Exec(ctx, insertEmailVerificationRequest,
 		arg.UserID,
 		arg.Column2,
 		arg.Column3,
@@ -68,7 +79,7 @@ ORDER BY created_at ASC
 `
 
 func (q *Queries) ListEmailVerificationRequests(ctx context.Context) ([]ClydeEmailVerificationRequest, error) {
-	rows, err := q.db.QueryContext(ctx, listEmailVerificationRequests)
+	rows, err := q.db.Query(ctx, listEmailVerificationRequests)
 	if err != nil {
 		return nil, err
 	}
@@ -87,9 +98,6 @@ func (q *Queries) ListEmailVerificationRequests(ctx context.Context) ([]ClydeEma
 		}
 		items = append(items, i)
 	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
@@ -106,11 +114,11 @@ WHERE user_id = $1
 
 type UpdateEmailVerificationRequestParams struct {
 	UserID    string
-	ExpiresAt time.Time
+	ExpiresAt pgtype.Timestamptz
 	Code      string
 }
 
 func (q *Queries) UpdateEmailVerificationRequest(ctx context.Context, arg UpdateEmailVerificationRequestParams) error {
-	_, err := q.db.ExecContext(ctx, updateEmailVerificationRequest, arg.UserID, arg.ExpiresAt, arg.Code)
+	_, err := q.db.Exec(ctx, updateEmailVerificationRequest, arg.UserID, arg.ExpiresAt, arg.Code)
 	return err
 }
