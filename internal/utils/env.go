@@ -6,14 +6,17 @@ import (
 	"log/slog"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/joho/godotenv"
 )
 
 type Env struct {
-	ENVIRONMENT  string
-	PORT         int
-	DATABASE_URL string
+	ENVIRONMENT       string
+	DATABASE_URL      string
+	PORT              int
+	JWT_SECRET        string
+	ENCRYPTION_SECRET string
 }
 
 func LoadEnv() (*Env, error) {
@@ -27,12 +30,22 @@ func LoadEnv() (*Env, error) {
 		} else if arg == "--env=production" || arg == "-e=production" {
 			env = "production"
 			break
+		} else if arg == "--env=development-serverless" || arg == "-e=development-serverless" {
+			env = "development-serverless"
+			break
+		} else if arg == "--env=production-serverless" || arg == "-e=production-serverless" {
+			env = "production-serverless"
+			break
 		}
+	}
+
+	if env != "development" && env != "production" && env != "development-serverless" && env != "production-serverless" {
+		log.Fatalf("Invalid environment specified.")
 	}
 
 	slog.Debug(fmt.Sprintf("Configured app to run in %s mode.", env))
 
-	if env == "development" {
+	if strings.HasPrefix(env, "development") {
 		err := godotenv.Load()
 		if err != nil {
 			log.Fatal("Error loading .env file")
@@ -57,8 +70,21 @@ func LoadEnv() (*Env, error) {
 		return nil, fmt.Errorf("DATABASE_URL is required, but is unset")
 	}
 
+	jwtSecret, exists := os.LookupEnv("JWT_SECRET")
+	if !exists {
+		return nil, fmt.Errorf("JWT_SECRET is required, but is unset")
+	}
+
+	encryptionSecret, exists := os.LookupEnv("ENCRYPTION_SECRET")
+	if !exists {
+		return nil, fmt.Errorf("ENCRYPTION_SECRET is required, but is unset")
+	}
+
 	return &Env{
-		PORT:         port,
-		DATABASE_URL: dbUrl,
+		ENVIRONMENT:       env,
+		PORT:              port,
+		DATABASE_URL:      dbUrl,
+		JWT_SECRET:        jwtSecret,
+		ENCRYPTION_SECRET: encryptionSecret,
 	}, nil
 }

@@ -13,7 +13,7 @@ import (
 )
 
 type NovusAPI struct {
-	port    int
+	env     *utils.Env
 	queries *database.Queries
 }
 
@@ -38,7 +38,7 @@ func main() {
 	}
 
 	novus := &NovusAPI{
-		port:    env.PORT,
+		env:     env,
 		queries: queries,
 	}
 
@@ -47,9 +47,9 @@ func main() {
 	r := chi.NewRouter()
 	r.Mount("/api", novus.NewAPI())
 
-	slog.Info(fmt.Sprintf("Clyde Noxus API is now running live on port %d...", novus.port))
+	slog.Info(fmt.Sprintf("Clyde Noxus API is now running live on port %d...", novus.env.PORT))
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", novus.port), r); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%d", novus.env.PORT), r); err != nil {
 		slog.Error("Failed to start server", "error", err)
 	}
 }
