@@ -8,17 +8,19 @@ import (
 
 	"github.com/clyde-sh/novus/internal/database"
 	"github.com/clyde-sh/novus/internal/handlers"
+	"github.com/clyde-sh/novus/internal/security"
 	"github.com/clyde-sh/novus/internal/utils"
 	"github.com/go-chi/chi/v5"
 )
 
 type NovusAPI struct {
-	env     *utils.Env
-	queries *database.Queries
+	env             *utils.Env
+	appRateLimiters security.AppRateLimiters
+	queries         *database.Queries
 }
 
 func (cfg *NovusAPI) NewAPI() chi.Router {
-	userHandlers := handlers.NewUserHandlers(cfg.queries)
+	userHandlers := handlers.NewUserHandlers(cfg.queries, &cfg.appRateLimiters)
 
 	api := chi.NewRouter()
 	api.Post("/users", userHandlers.HandleCreateUser)
@@ -37,9 +39,12 @@ func main() {
 		log.Fatal(err)
 	}
 
+	appRateLimiters := security.InitializeAppRateLimiters()
+
 	novus := &NovusAPI{
-		env:     env,
-		queries: queries,
+		env:             env,
+		queries:         queries,
+		appRateLimiters: appRateLimiters,
 	}
 
 	go utils.ScheduleDailyDatabaseCleanUp(queries)

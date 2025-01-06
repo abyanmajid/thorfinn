@@ -21,12 +21,13 @@ const (
 
 type UserHandlers struct {
 	queries   *database.Queries
-	ratelimit security.AppRateLimiters
+	ratelimit *security.AppRateLimiters
 }
 
-func NewUserHandlers(queries *database.Queries) UserHandlers {
+func NewUserHandlers(queries *database.Queries, appRateLimiters *security.AppRateLimiters) UserHandlers {
 	return UserHandlers{
-		queries: queries,
+		queries:   queries,
+		ratelimit: appRateLimiters,
 	}
 }
 
@@ -35,6 +36,7 @@ func (h *UserHandlers) HandleCreateUser(w http.ResponseWriter, r *http.Request) 
 
 	if ip != "" && !h.ratelimit.AuthRegisterRateLimit.Consume(ip) {
 		utils.WriteErrorJSON(w, security.ErrRateLimited, http.StatusTooManyRequests)
+		return
 	}
 
 	var body shared.AuthRegisterRequestDto
