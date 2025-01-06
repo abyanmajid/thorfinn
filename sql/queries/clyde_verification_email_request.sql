@@ -20,3 +20,7 @@ WHERE user_id = $1;
 -- name: DeleteEmailVerificationRequest :exec
 DELETE FROM clyde_email_verification_request
 WHERE user_id = $1;
+
+-- name: DeleteExpiredEmailVerificationRequests
+DELETE FROM clyde_email_verification_request
+WHERE expires_at <= $1;

@@ -20,3 +20,7 @@ WHERE id = $1;
 -- name: DeletePasswordResetRequest :exec
 DELETE FROM clyde_password_reset_request
 WHERE id = $1;
+
+-- name: DeleteExpiredPasswordResetRequests
+DELETE FROM clyde_password_reset_request
+WHERE expires_at <= $1;
