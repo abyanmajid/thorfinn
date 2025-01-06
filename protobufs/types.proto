@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package types;
+
+option go_package = "./shared/types;shared";
+
+message AuthRegisterRequestDto {
+  string name = 1;
+  string email = 2;
+  string password = 3;
+  string confirm_password = 4;
+}
+
+message AuthRegisterResponseDto {
+  string status = 1;
+  string message = 2;
+}
+
+message ErrorResponseDto {
+  string status = 1;
+  string error = 2;
+}

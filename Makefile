@@ -32,3 +32,10 @@ migrate-down:
 
 test:
 	go test ./...
+
+typegen:
+	protoc -I=./protobufs --go_out=./shared/go --go_opt=paths=source_relative ./protobufs/types.proto
+	protoc -I=./protobufs \
+		--plugin=protoc-gen-ts=/home/abyanmajid/.nvm/versions/node/v22.3.0/bin/protoc-gen-ts \
+		--ts_out=./shared/ts \
+		./protobufs/types.proto
