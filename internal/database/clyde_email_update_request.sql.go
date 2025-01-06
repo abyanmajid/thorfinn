@@ -42,15 +42,13 @@ func (q *Queries) FindEmailUpdateRequestById(ctx context.Context, id string) (Cl
 }
 
 const insertEmailUpdateRequest = `-- name: InsertEmailUpdateRequest :exec
-INSERT INTO clyde_email_update_request (id, user_id, created_at, updated_at, expires_at, email, code)
-VALUES ($1, $2, COALESCE($3, CURRENT_TIMESTAMP), COALESCE($4, CURRENT_TIMESTAMP), $5, $6, $7)
+INSERT INTO clyde_email_update_request (id, user_id, expires_at, email, code)
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type InsertEmailUpdateRequestParams struct {
 	ID        string
 	UserID    string
-	Column3   interface{}
-	Column4   interface{}
 	ExpiresAt pgtype.Timestamptz
 	Email     string
 	Code      string
@@ -60,8 +58,6 @@ func (q *Queries) InsertEmailUpdateRequest(ctx context.Context, arg InsertEmailU
 	_, err := q.db.Exec(ctx, insertEmailUpdateRequest,
 		arg.ID,
 		arg.UserID,
-		arg.Column3,
-		arg.Column4,
 		arg.ExpiresAt,
 		arg.Email,
 		arg.Code,

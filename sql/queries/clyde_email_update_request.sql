@@ -7,8 +7,8 @@ SELECT * FROM clyde_email_update_request
 ORDER BY created_at ASC;
 
 -- name: InsertEmailUpdateRequest :exec
-INSERT INTO clyde_email_update_request (id, user_id, created_at, updated_at, expires_at, email, code)
-VALUES ($1, $2, COALESCE($3, CURRENT_TIMESTAMP), COALESCE($4, CURRENT_TIMESTAMP), $5, $6, $7);
+INSERT INTO clyde_email_update_request (id, user_id, expires_at, email, code)
+VALUES ($1, $2, $3, $4, $5);
 
 -- name: UpdateEmailUpdateRequest :exec
 UPDATE clyde_email_update_request

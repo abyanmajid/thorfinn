@@ -40,16 +40,14 @@ func (q *Queries) FindPasskeyCredentialById(ctx context.Context, id string) (Cly
 }
 
 const insertPasskeyCredential = `-- name: InsertPasskeyCredential :exec
-INSERT INTO clyde_passkey_credential (id, user_id, name, created_at, updated_at, cose_algorithm_id, public_key)
-VALUES ($1, $2, $3, COALESCE($4, CURRENT_TIMESTAMP), COALESCE($5, CURRENT_TIMESTAMP), $6, $7)
+INSERT INTO clyde_passkey_credential (id, user_id, name, cose_algorithm_id, public_key)
+VALUES ($1, $2, $3, $4, $5)
 `
 
 type InsertPasskeyCredentialParams struct {
 	ID              string
 	UserID          string
 	Name            string
-	Column4         interface{}
-	Column5         interface{}
 	CoseAlgorithmID int32
 	PublicKey       []byte
 }
@@ -59,8 +57,6 @@ func (q *Queries) InsertPasskeyCredential(ctx context.Context, arg InsertPasskey
 		arg.ID,
 		arg.UserID,
 		arg.Name,
-		arg.Column4,
-		arg.Column5,
 		arg.CoseAlgorithmID,
 		arg.PublicKey,
 	)

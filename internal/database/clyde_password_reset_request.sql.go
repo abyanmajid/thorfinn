@@ -51,15 +51,13 @@ func (q *Queries) FindPasswordResetRequestById(ctx context.Context, id string) (
 }
 
 const insertPasswordResetRequest = `-- name: InsertPasswordResetRequest :exec
-INSERT INTO clyde_password_reset_request (id, user_id, created_at, updated_at, expires_at, code_hash)
-VALUES ($1, $2, COALESCE($3, CURRENT_TIMESTAMP), COALESCE($4, CURRENT_TIMESTAMP), $5, $6)
+INSERT INTO clyde_password_reset_request (id, user_id, expires_at, code_hash)
+VALUES ($1, $2, $3, $4)
 `
 
 type InsertPasswordResetRequestParams struct {
 	ID        string
 	UserID    string
-	Column3   interface{}
-	Column4   interface{}
 	ExpiresAt pgtype.Timestamptz
 	CodeHash  string
 }
@@ -68,8 +66,6 @@ func (q *Queries) InsertPasswordResetRequest(ctx context.Context, arg InsertPass
 	_, err := q.db.Exec(ctx, insertPasswordResetRequest,
 		arg.ID,
 		arg.UserID,
-		arg.Column3,
-		arg.Column4,
 		arg.ExpiresAt,
 		arg.CodeHash,
 	)

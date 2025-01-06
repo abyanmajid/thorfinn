@@ -144,7 +144,7 @@ export namespace types {
     export class AuthRegisterResponseDto extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
-            status?: string;
+            status?: number;
             message?: string;
         }) {
             super();
@@ -159,9 +159,9 @@ export namespace types {
             }
         }
         get status() {
-            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+            return pb_1.Message.getFieldWithDefault(this, 1, 0) as number;
         }
-        set status(value: string) {
+        set status(value: number) {
             pb_1.Message.setField(this, 1, value);
         }
         get message() {
@@ -171,7 +171,7 @@ export namespace types {
             pb_1.Message.setField(this, 2, value);
         }
         static fromObject(data: {
-            status?: string;
+            status?: number;
             message?: string;
         }): AuthRegisterResponseDto {
             const message = new AuthRegisterResponseDto({});
@@ -185,7 +185,7 @@ export namespace types {
         }
         toObject() {
             const data: {
-                status?: string;
+                status?: number;
                 message?: string;
             } = {};
             if (this.status != null) {
@@ -200,8 +200,8 @@ export namespace types {
         serialize(w: pb_1.BinaryWriter): void;
         serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
             const writer = w || new pb_1.BinaryWriter();
-            if (this.status.length)
-                writer.writeString(1, this.status);
+            if (this.status != 0)
+                writer.writeUint32(1, this.status);
             if (this.message.length)
                 writer.writeString(2, this.message);
             if (!w)
@@ -214,7 +214,7 @@ export namespace types {
                     break;
                 switch (reader.getFieldNumber()) {
                     case 1:
-                        message.status = reader.readString();
+                        message.status = reader.readUint32();
                         break;
                     case 2:
                         message.message = reader.readString();
@@ -229,96 +229,6 @@ export namespace types {
         }
         static deserializeBinary(bytes: Uint8Array): AuthRegisterResponseDto {
             return AuthRegisterResponseDto.deserialize(bytes);
-        }
-    }
-    export class ErrorResponseDto extends pb_1.Message {
-        #one_of_decls: number[][] = [];
-        constructor(data?: any[] | {
-            status?: string;
-            error?: string;
-        }) {
-            super();
-            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
-            if (!Array.isArray(data) && typeof data == "object") {
-                if ("status" in data && data.status != undefined) {
-                    this.status = data.status;
-                }
-                if ("error" in data && data.error != undefined) {
-                    this.error = data.error;
-                }
-            }
-        }
-        get status() {
-            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
-        }
-        set status(value: string) {
-            pb_1.Message.setField(this, 1, value);
-        }
-        get error() {
-            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
-        }
-        set error(value: string) {
-            pb_1.Message.setField(this, 2, value);
-        }
-        static fromObject(data: {
-            status?: string;
-            error?: string;
-        }): ErrorResponseDto {
-            const message = new ErrorResponseDto({});
-            if (data.status != null) {
-                message.status = data.status;
-            }
-            if (data.error != null) {
-                message.error = data.error;
-            }
-            return message;
-        }
-        toObject() {
-            const data: {
-                status?: string;
-                error?: string;
-            } = {};
-            if (this.status != null) {
-                data.status = this.status;
-            }
-            if (this.error != null) {
-                data.error = this.error;
-            }
-            return data;
-        }
-        serialize(): Uint8Array;
-        serialize(w: pb_1.BinaryWriter): void;
-        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
-            const writer = w || new pb_1.BinaryWriter();
-            if (this.status.length)
-                writer.writeString(1, this.status);
-            if (this.error.length)
-                writer.writeString(2, this.error);
-            if (!w)
-                return writer.getResultBuffer();
-        }
-        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): ErrorResponseDto {
-            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new ErrorResponseDto();
-            while (reader.nextField()) {
-                if (reader.isEndGroup())
-                    break;
-                switch (reader.getFieldNumber()) {
-                    case 1:
-                        message.status = reader.readString();
-                        break;
-                    case 2:
-                        message.error = reader.readString();
-                        break;
-                    default: reader.skipField();
-                }
-            }
-            return message;
-        }
-        serializeBinary(): Uint8Array {
-            return this.serialize();
-        }
-        static deserializeBinary(bytes: Uint8Array): ErrorResponseDto {
-            return ErrorResponseDto.deserialize(bytes);
         }
     }
 }

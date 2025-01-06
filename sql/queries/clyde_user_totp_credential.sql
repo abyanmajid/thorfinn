@@ -7,8 +7,8 @@ SELECT * FROM clyde_user_totp_credential
 ORDER BY created_at ASC;
 
 -- name: InsertTotpCredential :exec
-INSERT INTO clyde_user_totp_credential (user_id, created_at, updated_at, key)
-VALUES ($1, COALESCE($2, CURRENT_TIMESTAMP), COALESCE($3, CURRENT_TIMESTAMP), $4);
+INSERT INTO clyde_user_totp_credential (user_id, key)
+VALUES ($1, $2);
 
 -- name: UpdateTotpCredential :exec
 UPDATE clyde_user_totp_credential

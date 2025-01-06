@@ -7,8 +7,8 @@ SELECT * FROM clyde_password_reset_request
 ORDER BY created_at ASC;
 
 -- name: InsertPasswordResetRequest :exec
-INSERT INTO clyde_password_reset_request (id, user_id, created_at, updated_at, expires_at, code_hash)
-VALUES ($1, $2, COALESCE($3, CURRENT_TIMESTAMP), COALESCE($4, CURRENT_TIMESTAMP), $5, $6);
+INSERT INTO clyde_password_reset_request (id, user_id, expires_at, code_hash)
+VALUES ($1, $2, $3, $4);
 
 -- name: UpdatePasswordResetRequest :exec
 UPDATE clyde_password_reset_request

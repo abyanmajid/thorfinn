@@ -37,24 +37,17 @@ func (q *Queries) FindTotpCredentialByUserId(ctx context.Context, userID string)
 }
 
 const insertTotpCredential = `-- name: InsertTotpCredential :exec
-INSERT INTO clyde_user_totp_credential (user_id, created_at, updated_at, key)
-VALUES ($1, COALESCE($2, CURRENT_TIMESTAMP), COALESCE($3, CURRENT_TIMESTAMP), $4)
+INSERT INTO clyde_user_totp_credential (user_id, key)
+VALUES ($1, $2)
 `
 
 type InsertTotpCredentialParams struct {
-	UserID  string
-	Column2 interface{}
-	Column3 interface{}
-	Key     []byte
+	UserID string
+	Key    []byte
 }
 
 func (q *Queries) InsertTotpCredential(ctx context.Context, arg InsertTotpCredentialParams) error {
-	_, err := q.db.Exec(ctx, insertTotpCredential,
-		arg.UserID,
-		arg.Column2,
-		arg.Column3,
-		arg.Key,
-	)
+	_, err := q.db.Exec(ctx, insertTotpCredential, arg.UserID, arg.Key)
 	return err
 }
 

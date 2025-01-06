@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"log/slog"
 	"net/http"
 )
 
@@ -21,18 +22,20 @@ func ReadJSON(w http.ResponseWriter, r *http.Request, data any) error {
 	dec := json.NewDecoder(r.Body)
 	err := dec.Decode(data)
 	if err != nil {
+		slog.Error("Failed to parse request body as JSON.")
 		return err
 	}
 
 	err = dec.Decode(&struct{}{})
 	if err != io.EOF {
+		slog.Error("Failed to parse request body as JSON.")
 		return errors.New("body must have only a single JSON value")
 	}
 
 	return nil
 }
 
-func WriteJSON(w http.ResponseWriter, status int, data any, headers ...http.Header) error {
+func WriteJSON(w http.ResponseWriter, data any, status int, headers ...http.Header) error {
 	out, err := json.Marshal(data)
 	if err != nil {
 		return err
@@ -54,7 +57,9 @@ func WriteJSON(w http.ResponseWriter, status int, data any, headers ...http.Head
 	return nil
 }
 
-func ErrorJSON(w http.ResponseWriter, err error, status ...int) error {
+func WriteErrorJSON(w http.ResponseWriter, err error, status ...int) error {
+	slog.Debug(err.Error())
+
 	statusCode := http.StatusBadRequest
 
 	if len(status) > 0 {
@@ -65,5 +70,5 @@ func ErrorJSON(w http.ResponseWriter, err error, status ...int) error {
 	payload.Error = true
 	payload.Message = err.Error()
 
-	return WriteJSON(w, statusCode, payload)
+	return WriteJSON(w, payload, statusCode)
 }

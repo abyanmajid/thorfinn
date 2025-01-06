@@ -18,10 +18,10 @@ type NovusAPI struct {
 }
 
 func (cfg *NovusAPI) NewAPI() chi.Router {
-	authHandlers := handlers.NewAuthHandlers(cfg.queries)
+	userHandlers := handlers.NewUserHandlers(cfg.queries)
 
 	api := chi.NewRouter()
-	api.Get("/auth/register", authHandlers.RegisterHandler)
+	api.Post("/users", userHandlers.HandleCreateUser)
 
 	return api
 }
@@ -45,7 +45,6 @@ func main() {
 	go utils.ScheduleDailyDatabaseCleanUp(queries)
 
 	r := chi.NewRouter()
-
 	r.Mount("/api", novus.NewAPI())
 
 	slog.Info(fmt.Sprintf("Clyde Noxus API is now running live on port %d...", novus.port))

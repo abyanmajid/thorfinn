@@ -12,11 +12,6 @@ message AuthRegisterRequestDto {
 }
 
 message AuthRegisterResponseDto {
-  string status = 1;
+  uint32 status = 1;
   string message = 2;
-}
-
-message ErrorResponseDto {
-  string status = 1;
-  string error = 2;
 }

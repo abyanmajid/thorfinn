@@ -62,8 +62,8 @@ func (q *Queries) FindUserById(ctx context.Context, id string) (ClydeUser, error
 }
 
 const insertUser = `-- name: InsertUser :exec
-INSERT INTO clyde_user (id, email, password_hash, recovery_code, name, role, created_at, updated_at)
-VALUES ($1, $2, $3, $4, $5, COALESCE($6, 'user'), COALESCE($7, CURRENT_TIMESTAMP), COALESCE($8, CURRENT_TIMESTAMP))
+INSERT INTO clyde_user (id, email, password_hash, recovery_code, name, role)
+VALUES ($1, $2, $3, $4, $5, $6)
 `
 
 type InsertUserParams struct {
@@ -72,9 +72,7 @@ type InsertUserParams struct {
 	PasswordHash string
 	RecoveryCode string
 	Name         string
-	Column6      interface{}
-	Column7      interface{}
-	Column8      interface{}
+	Role         string
 }
 
 func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
@@ -84,9 +82,7 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
 		arg.PasswordHash,
 		arg.RecoveryCode,
 		arg.Name,
-		arg.Column6,
-		arg.Column7,
-		arg.Column8,
+		arg.Role,
 	)
 	return err
 }

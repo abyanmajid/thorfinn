@@ -50,26 +50,18 @@ func (q *Queries) FindEmailVerificationRequestByUserId(ctx context.Context, user
 }
 
 const insertEmailVerificationRequest = `-- name: InsertEmailVerificationRequest :exec
-INSERT INTO clyde_email_verification_request (user_id, created_at, updated_at, expires_at, code)
-VALUES ($1, COALESCE($2, CURRENT_TIMESTAMP), COALESCE($3, CURRENT_TIMESTAMP), $4, $5)
+INSERT INTO clyde_email_verification_request (user_id, expires_at, code)
+VALUES ($1, $2, $3)
 `
 
 type InsertEmailVerificationRequestParams struct {
 	UserID    string
-	Column2   interface{}
-	Column3   interface{}
 	ExpiresAt pgtype.Timestamptz
 	Code      string
 }
 
 func (q *Queries) InsertEmailVerificationRequest(ctx context.Context, arg InsertEmailVerificationRequestParams) error {
-	_, err := q.db.Exec(ctx, insertEmailVerificationRequest,
-		arg.UserID,
-		arg.Column2,
-		arg.Column3,
-		arg.ExpiresAt,
-		arg.Code,
-	)
+	_, err := q.db.Exec(ctx, insertEmailVerificationRequest, arg.UserID, arg.ExpiresAt, arg.Code)
 	return err
 }
 
