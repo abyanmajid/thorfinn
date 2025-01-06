@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/clyde-sh/novus/internal/database"
+	"github.com/clyde-sh/novus/internal/utils"
 )
 
 type AuthHandlers struct {
@@ -17,5 +18,5 @@ func NewAuthHandlers(queries *database.Queries) AuthHandlers {
 }
 
 func (h *AuthHandlers) RegisterHandler(w http.ResponseWriter, r *http.Request) {
-
+	utils.GetClientIP(r)
 }
