@@ -10,7 +10,7 @@ One way we're measuring progress in this regard is by going through the OWASP co
 
 ---
 
-Novus is a simple, framework-agnostic, Go-extensible auth server with everything you need to secure your applications:
+Novus is a simple, framework-agnostic, Go-extensible auth server that has everything you need to secure your applications:
 
 - Multiple providers: Credentials, OAuth2, WebAuthn (Passkeys).
 - Two-factor authentication: TOTPs via Authenticator Apps, Email, and SMS
