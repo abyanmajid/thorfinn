@@ -106,6 +106,13 @@ func (h *HandlersCtx) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *HandlersCtx) HandleAllGetUsers(w http.ResponseWriter, r *http.Request) {
+	ip := utils.GetClientIP(r)
+
+	if ip != "" && !h.ratelimit.UserGetAllUsersRateLimit.Consume(ip) {
+		utils.WriteErrorJSON(w, ErrRateLimitedError, http.StatusTooManyRequests)
+		return
+	}
+
 	users, err := h.queries.ListUsers(r.Context())
 	if err != nil {
 		utils.WriteErrorJSON(w, ErrInternalServerError, http.StatusInternalServerError)
@@ -133,6 +140,13 @@ func (h *HandlersCtx) HandleAllGetUsers(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *HandlersCtx) HandleGetUserById(w http.ResponseWriter, r *http.Request) {
+	ip := utils.GetClientIP(r)
+
+	if ip != "" && !h.ratelimit.UserGetUserByIdRateLimit.Consume(ip) {
+		utils.WriteErrorJSON(w, ErrRateLimitedError, http.StatusTooManyRequests)
+		return
+	}
+
 	id := chi.URLParam(r, "id")
 	user, err := h.queries.FindUserById(r.Context(), id)
 	if err != nil {
@@ -158,7 +172,50 @@ func (h *HandlersCtx) HandleGetUserById(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *HandlersCtx) HandleUpdateUserById(w http.ResponseWriter, r *http.Request) {
+	ip := utils.GetClientIP(r)
 
+	if ip != "" && !h.ratelimit.UserUpdateUserRateLimit.Consume(ip) {
+		utils.WriteErrorJSON(w, ErrRateLimitedError, http.StatusTooManyRequests)
+		return
+	}
+
+	id := chi.URLParam(r, "id")
+
+	var body shared.UserUpdateUserRequestDto
+	err := utils.ReadJSON(w, r, &body)
+	if err != nil {
+		utils.WriteErrorJSON(w, err, http.StatusBadRequest)
+		return
+	}
+
+	updatedUser, err := h.queries.UpdateUser(r.Context(), database.UpdateUserParams{
+		ID:           id,
+		Name:         body.Name,
+		Email:        body.Email,
+		PasswordHash: body.PasswordHash,
+		RecoveryCode: body.RecoveryCode,
+		Role:         body.Role,
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			utils.WriteErrorJSON(w, ErrNotFoundError, http.StatusNotFound)
+		} else {
+			utils.WriteErrorJSON(w, ErrInternalServerError, http.StatusInternalServerError)
+		}
+		return
+	}
+
+	utils.WriteJSON(w, shared.UserUpdateUserResponseDto{
+		User: &shared.User{
+			Id:              updatedUser.ID,
+			Name:            updatedUser.Name,
+			Email:           updatedUser.Email,
+			Role:            updatedUser.Role,
+			IsEmailVerified: updatedUser.IsEmailVerified.Bool,
+			CreatedAt:       timestamppb.New(updatedUser.CreatedAt.Time),
+			UpdatedAt:       timestamppb.New(updatedUser.UpdatedAt.Time),
+		},
+	}, http.StatusOK)
 }
 
 func (h *HandlersCtx) HandleDeleteUserById(w http.ResponseWriter, r *http.Request) {

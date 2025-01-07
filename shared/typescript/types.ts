@@ -583,4 +583,233 @@ export namespace types {
             return UserGetAllUsersResponseDto.deserialize(bytes);
         }
     }
+    export class UserUpdateUserRequestDto extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            name?: string;
+            email?: string;
+            password_hash?: string;
+            recovery_code?: string;
+            role?: string;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("name" in data && data.name != undefined) {
+                    this.name = data.name;
+                }
+                if ("email" in data && data.email != undefined) {
+                    this.email = data.email;
+                }
+                if ("password_hash" in data && data.password_hash != undefined) {
+                    this.password_hash = data.password_hash;
+                }
+                if ("recovery_code" in data && data.recovery_code != undefined) {
+                    this.recovery_code = data.recovery_code;
+                }
+                if ("role" in data && data.role != undefined) {
+                    this.role = data.role;
+                }
+            }
+        }
+        get name() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set name(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get email() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set email(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get password_hash() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set password_hash(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get recovery_code() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set recovery_code(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        get role() {
+            return pb_1.Message.getFieldWithDefault(this, 5, "") as string;
+        }
+        set role(value: string) {
+            pb_1.Message.setField(this, 5, value);
+        }
+        static fromObject(data: {
+            name?: string;
+            email?: string;
+            password_hash?: string;
+            recovery_code?: string;
+            role?: string;
+        }): UserUpdateUserRequestDto {
+            const message = new UserUpdateUserRequestDto({});
+            if (data.name != null) {
+                message.name = data.name;
+            }
+            if (data.email != null) {
+                message.email = data.email;
+            }
+            if (data.password_hash != null) {
+                message.password_hash = data.password_hash;
+            }
+            if (data.recovery_code != null) {
+                message.recovery_code = data.recovery_code;
+            }
+            if (data.role != null) {
+                message.role = data.role;
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                name?: string;
+                email?: string;
+                password_hash?: string;
+                recovery_code?: string;
+                role?: string;
+            } = {};
+            if (this.name != null) {
+                data.name = this.name;
+            }
+            if (this.email != null) {
+                data.email = this.email;
+            }
+            if (this.password_hash != null) {
+                data.password_hash = this.password_hash;
+            }
+            if (this.recovery_code != null) {
+                data.recovery_code = this.recovery_code;
+            }
+            if (this.role != null) {
+                data.role = this.role;
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.name.length)
+                writer.writeString(1, this.name);
+            if (this.email.length)
+                writer.writeString(2, this.email);
+            if (this.password_hash.length)
+                writer.writeString(3, this.password_hash);
+            if (this.recovery_code.length)
+                writer.writeString(4, this.recovery_code);
+            if (this.role.length)
+                writer.writeString(5, this.role);
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): UserUpdateUserRequestDto {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new UserUpdateUserRequestDto();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.name = reader.readString();
+                        break;
+                    case 2:
+                        message.email = reader.readString();
+                        break;
+                    case 3:
+                        message.password_hash = reader.readString();
+                        break;
+                    case 4:
+                        message.recovery_code = reader.readString();
+                        break;
+                    case 5:
+                        message.role = reader.readString();
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): UserUpdateUserRequestDto {
+            return UserUpdateUserRequestDto.deserialize(bytes);
+        }
+    }
+    export class UserUpdateUserResponseDto extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            user?: User;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("user" in data && data.user != undefined) {
+                    this.user = data.user;
+                }
+            }
+        }
+        get user() {
+            return pb_1.Message.getWrapperField(this, User, 1) as User;
+        }
+        set user(value: User) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_user() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        static fromObject(data: {
+            user?: ReturnType<typeof User.prototype.toObject>;
+        }): UserUpdateUserResponseDto {
+            const message = new UserUpdateUserResponseDto({});
+            if (data.user != null) {
+                message.user = User.fromObject(data.user);
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                user?: ReturnType<typeof User.prototype.toObject>;
+            } = {};
+            if (this.user != null) {
+                data.user = this.user.toObject();
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_user)
+                writer.writeMessage(1, this.user, () => this.user.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): UserUpdateUserResponseDto {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new UserUpdateUserResponseDto();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.user, () => message.user = User.deserialize(reader));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): UserUpdateUserResponseDto {
+            return UserUpdateUserResponseDto.deserialize(bytes);
+        }
+    }
 }

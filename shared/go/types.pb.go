@@ -336,6 +336,132 @@ func (x *UserGetAllUsersResponseDto) GetUsers() []*User {
 	return nil
 }
 
+type UserUpdateUserRequestDto struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Name         string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Email        string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	PasswordHash string `protobuf:"bytes,3,opt,name=password_hash,json=passwordHash,proto3" json:"password_hash,omitempty"`
+	RecoveryCode string `protobuf:"bytes,4,opt,name=recovery_code,json=recoveryCode,proto3" json:"recovery_code,omitempty"`
+	Role         string `protobuf:"bytes,5,opt,name=role,proto3" json:"role,omitempty"`
+}
+
+func (x *UserUpdateUserRequestDto) Reset() {
+	*x = UserUpdateUserRequestDto{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_types_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserUpdateUserRequestDto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserUpdateUserRequestDto) ProtoMessage() {}
+
+func (x *UserUpdateUserRequestDto) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserUpdateUserRequestDto.ProtoReflect.Descriptor instead.
+func (*UserUpdateUserRequestDto) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{5}
+}
+
+func (x *UserUpdateUserRequestDto) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
+func (x *UserUpdateUserRequestDto) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserUpdateUserRequestDto) GetPasswordHash() string {
+	if x != nil {
+		return x.PasswordHash
+	}
+	return ""
+}
+
+func (x *UserUpdateUserRequestDto) GetRecoveryCode() string {
+	if x != nil {
+		return x.RecoveryCode
+	}
+	return ""
+}
+
+func (x *UserUpdateUserRequestDto) GetRole() string {
+	if x != nil {
+		return x.Role
+	}
+	return ""
+}
+
+type UserUpdateUserResponseDto struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (x *UserUpdateUserResponseDto) Reset() {
+	*x = UserUpdateUserResponseDto{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_types_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserUpdateUserResponseDto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserUpdateUserResponseDto) ProtoMessage() {}
+
+func (x *UserUpdateUserResponseDto) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserUpdateUserResponseDto.ProtoReflect.Descriptor instead.
+func (*UserUpdateUserResponseDto) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *UserUpdateUserResponseDto) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
 var File_types_proto protoreflect.FileDescriptor
 
 var file_types_proto_rawDesc = []byte{
@@ -381,9 +507,23 @@ var file_types_proto_rawDesc = []byte{
 	0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x44, 0x74, 0x6f, 0x12, 0x21, 0x0a,
 	0x05, 0x75, 0x73, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x74,
 	0x79, 0x70, 0x65, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x05, 0x75, 0x73, 0x65, 0x72, 0x73,
-	0x42, 0x17, 0x5a, 0x15, 0x2e, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2f, 0x74, 0x79, 0x70,
-	0x65, 0x73, 0x3b, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x22, 0xa2, 0x01, 0x0a, 0x18, 0x55, 0x73, 0x65, 0x72, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x55,
+	0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x44, 0x74, 0x6f, 0x12, 0x12, 0x0a,
+	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61, 0x6d,
+	0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09,
+	0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x23, 0x0a, 0x0d, 0x70, 0x61, 0x73, 0x73, 0x77,
+	0x6f, 0x72, 0x64, 0x5f, 0x68, 0x61, 0x73, 0x68, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x0c,
+	0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x48, 0x61, 0x73, 0x68, 0x12, 0x23, 0x0a, 0x0d,
+	0x72, 0x65, 0x63, 0x6f, 0x76, 0x65, 0x72, 0x79, 0x5f, 0x63, 0x6f, 0x64, 0x65, 0x18, 0x04, 0x20,
+	0x01, 0x28, 0x09, 0x52, 0x0c, 0x72, 0x65, 0x63, 0x6f, 0x76, 0x65, 0x72, 0x79, 0x43, 0x6f, 0x64,
+	0x65, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x72, 0x6f, 0x6c, 0x65, 0x22, 0x3c, 0x0a, 0x19, 0x55, 0x73, 0x65, 0x72, 0x55, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x44,
+	0x74, 0x6f, 0x12, 0x1f, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
+	0x32, 0x0b, 0x2e, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04, 0x75,
+	0x73, 0x65, 0x72, 0x42, 0x17, 0x5a, 0x15, 0x2e, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2f,
+	0x74, 0x79, 0x70, 0x65, 0x73, 0x3b, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x62, 0x06, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -398,26 +538,29 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_types_proto_goTypes = []any{
 	(*User)(nil),                       // 0: types.User
 	(*UserCreateUserRequestDto)(nil),   // 1: types.UserCreateUserRequestDto
 	(*UserCreateUserResponseDto)(nil),  // 2: types.UserCreateUserResponseDto
 	(*UserGetUserByIdResponseDto)(nil), // 3: types.UserGetUserByIdResponseDto
 	(*UserGetAllUsersResponseDto)(nil), // 4: types.UserGetAllUsersResponseDto
-	(*timestamp.Timestamp)(nil),        // 5: google.protobuf.Timestamp
+	(*UserUpdateUserRequestDto)(nil),   // 5: types.UserUpdateUserRequestDto
+	(*UserUpdateUserResponseDto)(nil),  // 6: types.UserUpdateUserResponseDto
+	(*timestamp.Timestamp)(nil),        // 7: google.protobuf.Timestamp
 }
 var file_types_proto_depIdxs = []int32{
-	5, // 0: types.User.created_at:type_name -> google.protobuf.Timestamp
-	5, // 1: types.User.updated_at:type_name -> google.protobuf.Timestamp
+	7, // 0: types.User.created_at:type_name -> google.protobuf.Timestamp
+	7, // 1: types.User.updated_at:type_name -> google.protobuf.Timestamp
 	0, // 2: types.UserCreateUserResponseDto.user:type_name -> types.User
 	0, // 3: types.UserGetUserByIdResponseDto.user:type_name -> types.User
 	0, // 4: types.UserGetAllUsersResponseDto.users:type_name -> types.User
-	5, // [5:5] is the sub-list for method output_type
-	5, // [5:5] is the sub-list for method input_type
-	5, // [5:5] is the sub-list for extension type_name
-	5, // [5:5] is the sub-list for extension extendee
-	0, // [0:5] is the sub-list for field type_name
+	0, // 5: types.UserUpdateUserResponseDto.user:type_name -> types.User
+	6, // [6:6] is the sub-list for method output_type
+	6, // [6:6] is the sub-list for method input_type
+	6, // [6:6] is the sub-list for extension type_name
+	6, // [6:6] is the sub-list for extension extendee
+	0, // [0:6] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -486,6 +629,30 @@ func file_types_proto_init() {
 				return nil
 			}
 		}
+		file_types_proto_msgTypes[5].Exporter = func(v any, i int) any {
+			switch v := v.(*UserUpdateUserRequestDto); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_types_proto_msgTypes[6].Exporter = func(v any, i int) any {
+			switch v := v.(*UserUpdateUserResponseDto); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -493,7 +660,7 @@ func file_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_types_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   7,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
