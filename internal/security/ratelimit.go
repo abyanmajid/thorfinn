@@ -1,19 +1,19 @@
 package security
 
 import (
-	"errors"
 	"time"
 )
 
-var ErrRateLimited = errors.New("too many requests")
-var ErrInternalServerError = errors.New("something went wrong")
-
 type AppRateLimiters struct {
-	AuthRegisterRateLimit TokenBucketRateLimit
+	UserRegisterRateLimit    TokenBucketRateLimit
+	UserGetUserByIdRateLimit TokenBucketRateLimit
+	UserGetUsersRateLimit    TokenBucketRateLimit
 }
 
 func InitializeAppRateLimiters() AppRateLimiters {
 	return AppRateLimiters{
-		AuthRegisterRateLimit: NewTokenBucketRateLimit(5, 10*time.Second),
+		UserRegisterRateLimit:    NewTokenBucketRateLimit(5, 10*time.Second),
+		UserGetUserByIdRateLimit: NewTokenBucketRateLimit(50, 1*time.Minute),
+		UserGetUsersRateLimit:    NewTokenBucketRateLimit(50, 1*time.Minute),
 	}
 }

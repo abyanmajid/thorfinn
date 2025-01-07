@@ -56,14 +56,16 @@ type ClydeSecurityKey struct {
 }
 
 type ClydeUser struct {
-	ID           string
-	Email        string
-	PasswordHash string
-	RecoveryCode string
-	CreatedAt    pgtype.Timestamptz
-	UpdatedAt    pgtype.Timestamptz
-	Name         string
-	Role         string
+	ID              string
+	Email           string
+	PasswordHash    string
+	RecoveryCode    string
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+	Name            string
+	Role            string
+	IsEmailVerified pgtype.Bool
+	Is2faEnabled    pgtype.Bool
 }
 
 type ClydeUserTotpCredential struct {

@@ -7,25 +7,18 @@ package database
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
-const deleteUser = `-- name: DeleteUser :exec
+const deleteUser = `-- name: DeleteUser :one
 DELETE FROM clyde_user
 WHERE id = $1
+RETURNING id, email, password_hash, recovery_code, created_at, updated_at, name, role, is_email_verified, is_2fa_enabled
 `
 
-func (q *Queries) DeleteUser(ctx context.Context, id string) error {
-	_, err := q.db.Exec(ctx, deleteUser, id)
-	return err
-}
-
-const findUserByEmail = `-- name: FindUserByEmail :one
-SELECT id, email, password_hash, recovery_code, created_at, updated_at, name, role FROM clyde_user
-WHERE email = $1
-`
-
-func (q *Queries) FindUserByEmail(ctx context.Context, email string) (ClydeUser, error) {
-	row := q.db.QueryRow(ctx, findUserByEmail, email)
+func (q *Queries) DeleteUser(ctx context.Context, id string) (ClydeUser, error) {
+	row := q.db.QueryRow(ctx, deleteUser, id)
 	var i ClydeUser
 	err := row.Scan(
 		&i.ID,
@@ -36,34 +29,86 @@ func (q *Queries) FindUserByEmail(ctx context.Context, email string) (ClydeUser,
 		&i.UpdatedAt,
 		&i.Name,
 		&i.Role,
+		&i.IsEmailVerified,
+		&i.Is2faEnabled,
+	)
+	return i, err
+}
+
+const findUserByEmail = `-- name: FindUserByEmail :one
+SELECT id, name, email, role, 
+       is_email_verified, is_2fa_enabled, 
+       created_at, updated_at
+FROM clyde_user
+WHERE email = $1
+`
+
+type FindUserByEmailRow struct {
+	ID              string
+	Name            string
+	Email           string
+	Role            string
+	IsEmailVerified pgtype.Bool
+	Is2faEnabled    pgtype.Bool
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+}
+
+func (q *Queries) FindUserByEmail(ctx context.Context, email string) (FindUserByEmailRow, error) {
+	row := q.db.QueryRow(ctx, findUserByEmail, email)
+	var i FindUserByEmailRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Email,
+		&i.Role,
+		&i.IsEmailVerified,
+		&i.Is2faEnabled,
+		&i.CreatedAt,
+		&i.UpdatedAt,
 	)
 	return i, err
 }
 
 const findUserById = `-- name: FindUserById :one
-SELECT id, email, password_hash, recovery_code, created_at, updated_at, name, role FROM clyde_user
+SELECT id, name, email, role, 
+       is_email_verified, is_2fa_enabled, 
+       created_at, updated_at
+FROM clyde_user
 WHERE id = $1
 `
 
-func (q *Queries) FindUserById(ctx context.Context, id string) (ClydeUser, error) {
+type FindUserByIdRow struct {
+	ID              string
+	Name            string
+	Email           string
+	Role            string
+	IsEmailVerified pgtype.Bool
+	Is2faEnabled    pgtype.Bool
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+}
+
+func (q *Queries) FindUserById(ctx context.Context, id string) (FindUserByIdRow, error) {
 	row := q.db.QueryRow(ctx, findUserById, id)
-	var i ClydeUser
+	var i FindUserByIdRow
 	err := row.Scan(
 		&i.ID,
+		&i.Name,
 		&i.Email,
-		&i.PasswordHash,
-		&i.RecoveryCode,
+		&i.Role,
+		&i.IsEmailVerified,
+		&i.Is2faEnabled,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-		&i.Name,
-		&i.Role,
 	)
 	return i, err
 }
 
-const insertUser = `-- name: InsertUser :exec
+const insertUser = `-- name: InsertUser :one
 INSERT INTO clyde_user (id, email, password_hash, recovery_code, name, role)
 VALUES ($1, $2, $3, $4, $5, $6)
+RETURNING id, email, password_hash, recovery_code, created_at, updated_at, name, role, is_email_verified, is_2fa_enabled
 `
 
 type InsertUserParams struct {
@@ -75,8 +120,8 @@ type InsertUserParams struct {
 	Role         string
 }
 
-func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
-	_, err := q.db.Exec(ctx, insertUser,
+func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) (ClydeUser, error) {
+	row := q.db.QueryRow(ctx, insertUser,
 		arg.ID,
 		arg.Email,
 		arg.PasswordHash,
@@ -84,32 +129,59 @@ func (q *Queries) InsertUser(ctx context.Context, arg InsertUserParams) error {
 		arg.Name,
 		arg.Role,
 	)
-	return err
+	var i ClydeUser
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.PasswordHash,
+		&i.RecoveryCode,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.Role,
+		&i.IsEmailVerified,
+		&i.Is2faEnabled,
+	)
+	return i, err
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, email, password_hash, recovery_code, created_at, updated_at, name, role FROM clyde_user
+SELECT id, name, email, role, 
+       is_email_verified, is_2fa_enabled, 
+       created_at, updated_at
+FROM clyde_user
 ORDER BY created_at ASC
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]ClydeUser, error) {
+type ListUsersRow struct {
+	ID              string
+	Name            string
+	Email           string
+	Role            string
+	IsEmailVerified pgtype.Bool
+	Is2faEnabled    pgtype.Bool
+	CreatedAt       pgtype.Timestamptz
+	UpdatedAt       pgtype.Timestamptz
+}
+
+func (q *Queries) ListUsers(ctx context.Context) ([]ListUsersRow, error) {
 	rows, err := q.db.Query(ctx, listUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ClydeUser
+	var items []ListUsersRow
 	for rows.Next() {
-		var i ClydeUser
+		var i ListUsersRow
 		if err := rows.Scan(
 			&i.ID,
+			&i.Name,
 			&i.Email,
-			&i.PasswordHash,
-			&i.RecoveryCode,
+			&i.Role,
+			&i.IsEmailVerified,
+			&i.Is2faEnabled,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.Name,
-			&i.Role,
 		); err != nil {
 			return nil, err
 		}
@@ -121,7 +193,7 @@ func (q *Queries) ListUsers(ctx context.Context) ([]ClydeUser, error) {
 	return items, nil
 }
 
-const updateUser = `-- name: UpdateUser :exec
+const updateUser = `-- name: UpdateUser :one
 UPDATE clyde_user
 SET email = COALESCE($2, email),
     password_hash = COALESCE($3, password_hash),
@@ -130,6 +202,7 @@ SET email = COALESCE($2, email),
     role = COALESCE($6, role),
     updated_at = CURRENT_TIMESTAMP
 WHERE id = $1
+RETURNING id, email, password_hash, recovery_code, created_at, updated_at, name, role, is_email_verified, is_2fa_enabled
 `
 
 type UpdateUserParams struct {
@@ -141,8 +214,8 @@ type UpdateUserParams struct {
 	Role         string
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
-	_, err := q.db.Exec(ctx, updateUser,
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (ClydeUser, error) {
+	row := q.db.QueryRow(ctx, updateUser,
 		arg.ID,
 		arg.Email,
 		arg.PasswordHash,
@@ -150,5 +223,18 @@ func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) error {
 		arg.Name,
 		arg.Role,
 	)
-	return err
+	var i ClydeUser
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.PasswordHash,
+		&i.RecoveryCode,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+		&i.Role,
+		&i.IsEmailVerified,
+		&i.Is2faEnabled,
+	)
+	return i, err
 }

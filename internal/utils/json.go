@@ -8,12 +8,6 @@ import (
 	"net/http"
 )
 
-type JsonResponse struct {
-	Error   bool   `json:"error"`
-	Message string `json:"message"`
-	Data    any    `json:"data,omitempty"`
-}
-
 func ReadJSON(w http.ResponseWriter, r *http.Request, data any) error {
 	maxBytes := 1048576 // one megabyte
 
@@ -66,9 +60,9 @@ func WriteErrorJSON(w http.ResponseWriter, err error, status ...int) error {
 		statusCode = status[0]
 	}
 
-	var payload JsonResponse
-	payload.Error = true
-	payload.Message = err.Error()
+	response := map[string]string{
+		"error": err.Error(),
+	}
 
-	return WriteJSON(w, payload, statusCode)
+	return WriteJSON(w, response, statusCode)
 }

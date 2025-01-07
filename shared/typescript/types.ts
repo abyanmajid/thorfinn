@@ -3,9 +3,244 @@
  * compiler version: 3.12.4
  * source: types.proto
  * git: https://github.com/thesayyn/protoc-gen-ts */
+import * as dependency_1 from "./google/protobuf/timestamp";
 import * as pb_1 from "google-protobuf";
 export namespace types {
-    export class AuthRegisterRequestDto extends pb_1.Message {
+    export class User extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            id?: string;
+            name?: string;
+            email?: string;
+            role?: string;
+            is_email_verified?: boolean;
+            is_2fa_enabled?: boolean;
+            created_at?: dependency_1.google.protobuf.Timestamp;
+            updated_at?: dependency_1.google.protobuf.Timestamp;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("id" in data && data.id != undefined) {
+                    this.id = data.id;
+                }
+                if ("name" in data && data.name != undefined) {
+                    this.name = data.name;
+                }
+                if ("email" in data && data.email != undefined) {
+                    this.email = data.email;
+                }
+                if ("role" in data && data.role != undefined) {
+                    this.role = data.role;
+                }
+                if ("is_email_verified" in data && data.is_email_verified != undefined) {
+                    this.is_email_verified = data.is_email_verified;
+                }
+                if ("is_2fa_enabled" in data && data.is_2fa_enabled != undefined) {
+                    this.is_2fa_enabled = data.is_2fa_enabled;
+                }
+                if ("created_at" in data && data.created_at != undefined) {
+                    this.created_at = data.created_at;
+                }
+                if ("updated_at" in data && data.updated_at != undefined) {
+                    this.updated_at = data.updated_at;
+                }
+            }
+        }
+        get id() {
+            return pb_1.Message.getFieldWithDefault(this, 1, "") as string;
+        }
+        set id(value: string) {
+            pb_1.Message.setField(this, 1, value);
+        }
+        get name() {
+            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
+        }
+        set name(value: string) {
+            pb_1.Message.setField(this, 2, value);
+        }
+        get email() {
+            return pb_1.Message.getFieldWithDefault(this, 3, "") as string;
+        }
+        set email(value: string) {
+            pb_1.Message.setField(this, 3, value);
+        }
+        get role() {
+            return pb_1.Message.getFieldWithDefault(this, 4, "") as string;
+        }
+        set role(value: string) {
+            pb_1.Message.setField(this, 4, value);
+        }
+        get is_email_verified() {
+            return pb_1.Message.getFieldWithDefault(this, 5, false) as boolean;
+        }
+        set is_email_verified(value: boolean) {
+            pb_1.Message.setField(this, 5, value);
+        }
+        get is_2fa_enabled() {
+            return pb_1.Message.getFieldWithDefault(this, 6, false) as boolean;
+        }
+        set is_2fa_enabled(value: boolean) {
+            pb_1.Message.setField(this, 6, value);
+        }
+        get created_at() {
+            return pb_1.Message.getWrapperField(this, dependency_1.google.protobuf.Timestamp, 7) as dependency_1.google.protobuf.Timestamp;
+        }
+        set created_at(value: dependency_1.google.protobuf.Timestamp) {
+            pb_1.Message.setWrapperField(this, 7, value);
+        }
+        get has_created_at() {
+            return pb_1.Message.getField(this, 7) != null;
+        }
+        get updated_at() {
+            return pb_1.Message.getWrapperField(this, dependency_1.google.protobuf.Timestamp, 8) as dependency_1.google.protobuf.Timestamp;
+        }
+        set updated_at(value: dependency_1.google.protobuf.Timestamp) {
+            pb_1.Message.setWrapperField(this, 8, value);
+        }
+        get has_updated_at() {
+            return pb_1.Message.getField(this, 8) != null;
+        }
+        static fromObject(data: {
+            id?: string;
+            name?: string;
+            email?: string;
+            role?: string;
+            is_email_verified?: boolean;
+            is_2fa_enabled?: boolean;
+            created_at?: ReturnType<typeof dependency_1.google.protobuf.Timestamp.prototype.toObject>;
+            updated_at?: ReturnType<typeof dependency_1.google.protobuf.Timestamp.prototype.toObject>;
+        }): User {
+            const message = new User({});
+            if (data.id != null) {
+                message.id = data.id;
+            }
+            if (data.name != null) {
+                message.name = data.name;
+            }
+            if (data.email != null) {
+                message.email = data.email;
+            }
+            if (data.role != null) {
+                message.role = data.role;
+            }
+            if (data.is_email_verified != null) {
+                message.is_email_verified = data.is_email_verified;
+            }
+            if (data.is_2fa_enabled != null) {
+                message.is_2fa_enabled = data.is_2fa_enabled;
+            }
+            if (data.created_at != null) {
+                message.created_at = dependency_1.google.protobuf.Timestamp.fromObject(data.created_at);
+            }
+            if (data.updated_at != null) {
+                message.updated_at = dependency_1.google.protobuf.Timestamp.fromObject(data.updated_at);
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                id?: string;
+                name?: string;
+                email?: string;
+                role?: string;
+                is_email_verified?: boolean;
+                is_2fa_enabled?: boolean;
+                created_at?: ReturnType<typeof dependency_1.google.protobuf.Timestamp.prototype.toObject>;
+                updated_at?: ReturnType<typeof dependency_1.google.protobuf.Timestamp.prototype.toObject>;
+            } = {};
+            if (this.id != null) {
+                data.id = this.id;
+            }
+            if (this.name != null) {
+                data.name = this.name;
+            }
+            if (this.email != null) {
+                data.email = this.email;
+            }
+            if (this.role != null) {
+                data.role = this.role;
+            }
+            if (this.is_email_verified != null) {
+                data.is_email_verified = this.is_email_verified;
+            }
+            if (this.is_2fa_enabled != null) {
+                data.is_2fa_enabled = this.is_2fa_enabled;
+            }
+            if (this.created_at != null) {
+                data.created_at = this.created_at.toObject();
+            }
+            if (this.updated_at != null) {
+                data.updated_at = this.updated_at.toObject();
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.id.length)
+                writer.writeString(1, this.id);
+            if (this.name.length)
+                writer.writeString(2, this.name);
+            if (this.email.length)
+                writer.writeString(3, this.email);
+            if (this.role.length)
+                writer.writeString(4, this.role);
+            if (this.is_email_verified != false)
+                writer.writeBool(5, this.is_email_verified);
+            if (this.is_2fa_enabled != false)
+                writer.writeBool(6, this.is_2fa_enabled);
+            if (this.has_created_at)
+                writer.writeMessage(7, this.created_at, () => this.created_at.serialize(writer));
+            if (this.has_updated_at)
+                writer.writeMessage(8, this.updated_at, () => this.updated_at.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): User {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new User();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        message.id = reader.readString();
+                        break;
+                    case 2:
+                        message.name = reader.readString();
+                        break;
+                    case 3:
+                        message.email = reader.readString();
+                        break;
+                    case 4:
+                        message.role = reader.readString();
+                        break;
+                    case 5:
+                        message.is_email_verified = reader.readBool();
+                        break;
+                    case 6:
+                        message.is_2fa_enabled = reader.readBool();
+                        break;
+                    case 7:
+                        reader.readMessage(message.created_at, () => message.created_at = dependency_1.google.protobuf.Timestamp.deserialize(reader));
+                        break;
+                    case 8:
+                        reader.readMessage(message.updated_at, () => message.updated_at = dependency_1.google.protobuf.Timestamp.deserialize(reader));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): User {
+            return User.deserialize(bytes);
+        }
+    }
+    export class UserCreateUserRequestDto extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
             name?: string;
@@ -59,8 +294,8 @@ export namespace types {
             email?: string;
             password?: string;
             confirm_password?: string;
-        }): AuthRegisterRequestDto {
-            const message = new AuthRegisterRequestDto({});
+        }): UserCreateUserRequestDto {
+            const message = new UserCreateUserRequestDto({});
             if (data.name != null) {
                 message.name = data.name;
             }
@@ -111,8 +346,8 @@ export namespace types {
             if (!w)
                 return writer.getResultBuffer();
         }
-        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): AuthRegisterRequestDto {
-            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new AuthRegisterRequestDto();
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): UserCreateUserRequestDto {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new UserCreateUserRequestDto();
             while (reader.nextField()) {
                 if (reader.isEndGroup())
                     break;
@@ -137,62 +372,47 @@ export namespace types {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): AuthRegisterRequestDto {
-            return AuthRegisterRequestDto.deserialize(bytes);
+        static deserializeBinary(bytes: Uint8Array): UserCreateUserRequestDto {
+            return UserCreateUserRequestDto.deserialize(bytes);
         }
     }
-    export class AuthRegisterResponseDto extends pb_1.Message {
+    export class UserCreateUserResponseDto extends pb_1.Message {
         #one_of_decls: number[][] = [];
         constructor(data?: any[] | {
-            status?: number;
-            message?: string;
+            user?: User;
         }) {
             super();
             pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
             if (!Array.isArray(data) && typeof data == "object") {
-                if ("status" in data && data.status != undefined) {
-                    this.status = data.status;
-                }
-                if ("message" in data && data.message != undefined) {
-                    this.message = data.message;
+                if ("user" in data && data.user != undefined) {
+                    this.user = data.user;
                 }
             }
         }
-        get status() {
-            return pb_1.Message.getFieldWithDefault(this, 1, 0) as number;
+        get user() {
+            return pb_1.Message.getWrapperField(this, User, 1) as User;
         }
-        set status(value: number) {
-            pb_1.Message.setField(this, 1, value);
+        set user(value: User) {
+            pb_1.Message.setWrapperField(this, 1, value);
         }
-        get message() {
-            return pb_1.Message.getFieldWithDefault(this, 2, "") as string;
-        }
-        set message(value: string) {
-            pb_1.Message.setField(this, 2, value);
+        get has_user() {
+            return pb_1.Message.getField(this, 1) != null;
         }
         static fromObject(data: {
-            status?: number;
-            message?: string;
-        }): AuthRegisterResponseDto {
-            const message = new AuthRegisterResponseDto({});
-            if (data.status != null) {
-                message.status = data.status;
-            }
-            if (data.message != null) {
-                message.message = data.message;
+            user?: ReturnType<typeof User.prototype.toObject>;
+        }): UserCreateUserResponseDto {
+            const message = new UserCreateUserResponseDto({});
+            if (data.user != null) {
+                message.user = User.fromObject(data.user);
             }
             return message;
         }
         toObject() {
             const data: {
-                status?: number;
-                message?: string;
+                user?: ReturnType<typeof User.prototype.toObject>;
             } = {};
-            if (this.status != null) {
-                data.status = this.status;
-            }
-            if (this.message != null) {
-                data.message = this.message;
+            if (this.user != null) {
+                data.user = this.user.toObject();
             }
             return data;
         }
@@ -200,24 +420,19 @@ export namespace types {
         serialize(w: pb_1.BinaryWriter): void;
         serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
             const writer = w || new pb_1.BinaryWriter();
-            if (this.status != 0)
-                writer.writeUint32(1, this.status);
-            if (this.message.length)
-                writer.writeString(2, this.message);
+            if (this.has_user)
+                writer.writeMessage(1, this.user, () => this.user.serialize(writer));
             if (!w)
                 return writer.getResultBuffer();
         }
-        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): AuthRegisterResponseDto {
-            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new AuthRegisterResponseDto();
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): UserCreateUserResponseDto {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new UserCreateUserResponseDto();
             while (reader.nextField()) {
                 if (reader.isEndGroup())
                     break;
                 switch (reader.getFieldNumber()) {
                     case 1:
-                        message.status = reader.readUint32();
-                        break;
-                    case 2:
-                        message.message = reader.readString();
+                        reader.readMessage(message.user, () => message.user = User.deserialize(reader));
                         break;
                     default: reader.skipField();
                 }
@@ -227,8 +442,145 @@ export namespace types {
         serializeBinary(): Uint8Array {
             return this.serialize();
         }
-        static deserializeBinary(bytes: Uint8Array): AuthRegisterResponseDto {
-            return AuthRegisterResponseDto.deserialize(bytes);
+        static deserializeBinary(bytes: Uint8Array): UserCreateUserResponseDto {
+            return UserCreateUserResponseDto.deserialize(bytes);
+        }
+    }
+    export class UserGetUserByIdResponseDto extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            user?: User;
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("user" in data && data.user != undefined) {
+                    this.user = data.user;
+                }
+            }
+        }
+        get user() {
+            return pb_1.Message.getWrapperField(this, User, 1) as User;
+        }
+        set user(value: User) {
+            pb_1.Message.setWrapperField(this, 1, value);
+        }
+        get has_user() {
+            return pb_1.Message.getField(this, 1) != null;
+        }
+        static fromObject(data: {
+            user?: ReturnType<typeof User.prototype.toObject>;
+        }): UserGetUserByIdResponseDto {
+            const message = new UserGetUserByIdResponseDto({});
+            if (data.user != null) {
+                message.user = User.fromObject(data.user);
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                user?: ReturnType<typeof User.prototype.toObject>;
+            } = {};
+            if (this.user != null) {
+                data.user = this.user.toObject();
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.has_user)
+                writer.writeMessage(1, this.user, () => this.user.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): UserGetUserByIdResponseDto {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new UserGetUserByIdResponseDto();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.user, () => message.user = User.deserialize(reader));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): UserGetUserByIdResponseDto {
+            return UserGetUserByIdResponseDto.deserialize(bytes);
+        }
+    }
+    export class UserGetAllUsersResponseDto extends pb_1.Message {
+        #one_of_decls: number[][] = [];
+        constructor(data?: any[] | {
+            users?: User[];
+        }) {
+            super();
+            pb_1.Message.initialize(this, Array.isArray(data) ? data : [], 0, -1, [1], this.#one_of_decls);
+            if (!Array.isArray(data) && typeof data == "object") {
+                if ("users" in data && data.users != undefined) {
+                    this.users = data.users;
+                }
+            }
+        }
+        get users() {
+            return pb_1.Message.getRepeatedWrapperField(this, User, 1) as User[];
+        }
+        set users(value: User[]) {
+            pb_1.Message.setRepeatedWrapperField(this, 1, value);
+        }
+        static fromObject(data: {
+            users?: ReturnType<typeof User.prototype.toObject>[];
+        }): UserGetAllUsersResponseDto {
+            const message = new UserGetAllUsersResponseDto({});
+            if (data.users != null) {
+                message.users = data.users.map(item => User.fromObject(item));
+            }
+            return message;
+        }
+        toObject() {
+            const data: {
+                users?: ReturnType<typeof User.prototype.toObject>[];
+            } = {};
+            if (this.users != null) {
+                data.users = this.users.map((item: User) => item.toObject());
+            }
+            return data;
+        }
+        serialize(): Uint8Array;
+        serialize(w: pb_1.BinaryWriter): void;
+        serialize(w?: pb_1.BinaryWriter): Uint8Array | void {
+            const writer = w || new pb_1.BinaryWriter();
+            if (this.users.length)
+                writer.writeRepeatedMessage(1, this.users, (item: User) => item.serialize(writer));
+            if (!w)
+                return writer.getResultBuffer();
+        }
+        static deserialize(bytes: Uint8Array | pb_1.BinaryReader): UserGetAllUsersResponseDto {
+            const reader = bytes instanceof pb_1.BinaryReader ? bytes : new pb_1.BinaryReader(bytes), message = new UserGetAllUsersResponseDto();
+            while (reader.nextField()) {
+                if (reader.isEndGroup())
+                    break;
+                switch (reader.getFieldNumber()) {
+                    case 1:
+                        reader.readMessage(message.users, () => pb_1.Message.addToRepeatedWrapperField(message, 1, User.deserialize(reader), User));
+                        break;
+                    default: reader.skipField();
+                }
+            }
+            return message;
+        }
+        serializeBinary(): Uint8Array {
+            return this.serialize();
+        }
+        static deserializeBinary(bytes: Uint8Array): UserGetAllUsersResponseDto {
+            return UserGetAllUsersResponseDto.deserialize(bytes);
         }
     }
 }

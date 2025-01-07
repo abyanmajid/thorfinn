@@ -7,6 +7,7 @@
 package shared
 
 import (
+	timestamp "github.com/golang/protobuf/ptypes/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -20,19 +21,23 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type AuthRegisterRequestDto struct {
+type User struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name            string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	Email           string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
-	Password        string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
-	ConfirmPassword string `protobuf:"bytes,4,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
+	Id              string               `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name            string               `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Email           string               `protobuf:"bytes,3,opt,name=email,proto3" json:"email,omitempty"`
+	Role            string               `protobuf:"bytes,4,opt,name=role,proto3" json:"role,omitempty"`
+	IsEmailVerified bool                 `protobuf:"varint,5,opt,name=is_email_verified,json=isEmailVerified,proto3" json:"is_email_verified,omitempty"`
+	Is_2FaEnabled   bool                 `protobuf:"varint,6,opt,name=is_2fa_enabled,json=is2faEnabled,proto3" json:"is_2fa_enabled,omitempty"`
+	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,7,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt       *timestamp.Timestamp `protobuf:"bytes,8,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 }
 
-func (x *AuthRegisterRequestDto) Reset() {
-	*x = AuthRegisterRequestDto{}
+func (x *User) Reset() {
+	*x = User{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_proto_msgTypes[0]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -40,13 +45,13 @@ func (x *AuthRegisterRequestDto) Reset() {
 	}
 }
 
-func (x *AuthRegisterRequestDto) String() string {
+func (x *User) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AuthRegisterRequestDto) ProtoMessage() {}
+func (*User) ProtoMessage() {}
 
-func (x *AuthRegisterRequestDto) ProtoReflect() protoreflect.Message {
+func (x *User) ProtoReflect() protoreflect.Message {
 	mi := &file_types_proto_msgTypes[0]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -58,50 +63,80 @@ func (x *AuthRegisterRequestDto) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AuthRegisterRequestDto.ProtoReflect.Descriptor instead.
-func (*AuthRegisterRequestDto) Descriptor() ([]byte, []int) {
+// Deprecated: Use User.ProtoReflect.Descriptor instead.
+func (*User) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *AuthRegisterRequestDto) GetName() string {
+func (x *User) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
+func (x *User) GetName() string {
 	if x != nil {
 		return x.Name
 	}
 	return ""
 }
 
-func (x *AuthRegisterRequestDto) GetEmail() string {
+func (x *User) GetEmail() string {
 	if x != nil {
 		return x.Email
 	}
 	return ""
 }
 
-func (x *AuthRegisterRequestDto) GetPassword() string {
+func (x *User) GetRole() string {
 	if x != nil {
-		return x.Password
+		return x.Role
 	}
 	return ""
 }
 
-func (x *AuthRegisterRequestDto) GetConfirmPassword() string {
+func (x *User) GetIsEmailVerified() bool {
 	if x != nil {
-		return x.ConfirmPassword
+		return x.IsEmailVerified
 	}
-	return ""
+	return false
 }
 
-type AuthRegisterResponseDto struct {
+func (x *User) GetIs_2FaEnabled() bool {
+	if x != nil {
+		return x.Is_2FaEnabled
+	}
+	return false
+}
+
+func (x *User) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *User) GetUpdatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
+type UserCreateUserRequestDto struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Status  uint32 `protobuf:"varint,1,opt,name=status,proto3" json:"status,omitempty"`
-	Message string `protobuf:"bytes,2,opt,name=message,proto3" json:"message,omitempty"`
+	Name            string `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Email           string `protobuf:"bytes,2,opt,name=email,proto3" json:"email,omitempty"`
+	Password        string `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	ConfirmPassword string `protobuf:"bytes,4,opt,name=confirm_password,json=confirmPassword,proto3" json:"confirm_password,omitempty"`
 }
 
-func (x *AuthRegisterResponseDto) Reset() {
-	*x = AuthRegisterResponseDto{}
+func (x *UserCreateUserRequestDto) Reset() {
+	*x = UserCreateUserRequestDto{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_types_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -109,13 +144,13 @@ func (x *AuthRegisterResponseDto) Reset() {
 	}
 }
 
-func (x *AuthRegisterResponseDto) String() string {
+func (x *UserCreateUserRequestDto) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*AuthRegisterResponseDto) ProtoMessage() {}
+func (*UserCreateUserRequestDto) ProtoMessage() {}
 
-func (x *AuthRegisterResponseDto) ProtoReflect() protoreflect.Message {
+func (x *UserCreateUserRequestDto) ProtoReflect() protoreflect.Message {
 	mi := &file_types_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -127,45 +162,228 @@ func (x *AuthRegisterResponseDto) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use AuthRegisterResponseDto.ProtoReflect.Descriptor instead.
-func (*AuthRegisterResponseDto) Descriptor() ([]byte, []int) {
+// Deprecated: Use UserCreateUserRequestDto.ProtoReflect.Descriptor instead.
+func (*UserCreateUserRequestDto) Descriptor() ([]byte, []int) {
 	return file_types_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *AuthRegisterResponseDto) GetStatus() uint32 {
+func (x *UserCreateUserRequestDto) GetName() string {
 	if x != nil {
-		return x.Status
-	}
-	return 0
-}
-
-func (x *AuthRegisterResponseDto) GetMessage() string {
-	if x != nil {
-		return x.Message
+		return x.Name
 	}
 	return ""
+}
+
+func (x *UserCreateUserRequestDto) GetEmail() string {
+	if x != nil {
+		return x.Email
+	}
+	return ""
+}
+
+func (x *UserCreateUserRequestDto) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+func (x *UserCreateUserRequestDto) GetConfirmPassword() string {
+	if x != nil {
+		return x.ConfirmPassword
+	}
+	return ""
+}
+
+type UserCreateUserResponseDto struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (x *UserCreateUserResponseDto) Reset() {
+	*x = UserCreateUserResponseDto{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_types_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserCreateUserResponseDto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserCreateUserResponseDto) ProtoMessage() {}
+
+func (x *UserCreateUserResponseDto) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserCreateUserResponseDto.ProtoReflect.Descriptor instead.
+func (*UserCreateUserResponseDto) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *UserCreateUserResponseDto) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+type UserGetUserByIdResponseDto struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (x *UserGetUserByIdResponseDto) Reset() {
+	*x = UserGetUserByIdResponseDto{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_types_proto_msgTypes[3]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserGetUserByIdResponseDto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserGetUserByIdResponseDto) ProtoMessage() {}
+
+func (x *UserGetUserByIdResponseDto) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[3]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserGetUserByIdResponseDto.ProtoReflect.Descriptor instead.
+func (*UserGetUserByIdResponseDto) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *UserGetUserByIdResponseDto) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+type UserGetAllUsersResponseDto struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Users []*User `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+}
+
+func (x *UserGetAllUsersResponseDto) Reset() {
+	*x = UserGetAllUsersResponseDto{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_types_proto_msgTypes[4]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserGetAllUsersResponseDto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserGetAllUsersResponseDto) ProtoMessage() {}
+
+func (x *UserGetAllUsersResponseDto) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[4]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserGetAllUsersResponseDto.ProtoReflect.Descriptor instead.
+func (*UserGetAllUsersResponseDto) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *UserGetAllUsersResponseDto) GetUsers() []*User {
+	if x != nil {
+		return x.Users
+	}
+	return nil
 }
 
 var File_types_proto protoreflect.FileDescriptor
 
 var file_types_proto_rawDesc = []byte{
 	0x0a, 0x0b, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x05, 0x74,
-	0x79, 0x70, 0x65, 0x73, 0x22, 0x89, 0x01, 0x0a, 0x16, 0x41, 0x75, 0x74, 0x68, 0x52, 0x65, 0x67,
-	0x69, 0x73, 0x74, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x44, 0x74, 0x6f, 0x12,
-	0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e,
-	0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x02, 0x20, 0x01,
-	0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70, 0x61, 0x73,
-	0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70, 0x61, 0x73,
-	0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x29, 0x0a, 0x10, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x72, 0x6d,
-	0x5f, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x0f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x72, 0x6d, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64,
-	0x22, 0x4b, 0x0a, 0x17, 0x41, 0x75, 0x74, 0x68, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72,
-	0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x44, 0x74, 0x6f, 0x12, 0x16, 0x0a, 0x06, 0x73,
-	0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0d, 0x52, 0x06, 0x73, 0x74, 0x61,
-	0x74, 0x75, 0x73, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x42, 0x17, 0x5a,
-	0x15, 0x2e, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x3b,
-	0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x79, 0x70, 0x65, 0x73, 0x1a, 0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x62, 0x75, 0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x9c, 0x02, 0x0a, 0x04, 0x55, 0x73, 0x65, 0x72, 0x12, 0x0e,
+	0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12,
+	0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x6e, 0x61,
+	0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x03, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x12, 0x0a, 0x04, 0x72, 0x6f, 0x6c, 0x65,
+	0x18, 0x04, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x72, 0x6f, 0x6c, 0x65, 0x12, 0x2a, 0x0a, 0x11,
+	0x69, 0x73, 0x5f, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x5f, 0x76, 0x65, 0x72, 0x69, 0x66, 0x69, 0x65,
+	0x64, 0x18, 0x05, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0f, 0x69, 0x73, 0x45, 0x6d, 0x61, 0x69, 0x6c,
+	0x56, 0x65, 0x72, 0x69, 0x66, 0x69, 0x65, 0x64, 0x12, 0x24, 0x0a, 0x0e, 0x69, 0x73, 0x5f, 0x32,
+	0x66, 0x61, 0x5f, 0x65, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x64, 0x18, 0x06, 0x20, 0x01, 0x28, 0x08,
+	0x52, 0x0c, 0x69, 0x73, 0x32, 0x66, 0x61, 0x45, 0x6e, 0x61, 0x62, 0x6c, 0x65, 0x64, 0x12, 0x39,
+	0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x07, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09,
+	0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x39, 0x0a, 0x0a, 0x75, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x08, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e,
+	0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e,
+	0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74,
+	0x65, 0x64, 0x41, 0x74, 0x22, 0x8b, 0x01, 0x0a, 0x18, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65,
+	0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x44, 0x74,
+	0x6f, 0x12, 0x12, 0x0a, 0x04, 0x6e, 0x61, 0x6d, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x6e, 0x61, 0x6d, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x18, 0x02,
+	0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x65, 0x6d, 0x61, 0x69, 0x6c, 0x12, 0x1a, 0x0a, 0x08, 0x70,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x52, 0x08, 0x70,
+	0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x29, 0x0a, 0x10, 0x63, 0x6f, 0x6e, 0x66, 0x69,
+	0x72, 0x6d, 0x5f, 0x70, 0x61, 0x73, 0x73, 0x77, 0x6f, 0x72, 0x64, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x0f, 0x63, 0x6f, 0x6e, 0x66, 0x69, 0x72, 0x6d, 0x50, 0x61, 0x73, 0x73, 0x77, 0x6f,
+	0x72, 0x64, 0x22, 0x3c, 0x0a, 0x19, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65,
+	0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x44, 0x74, 0x6f, 0x12,
+	0x1f, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e,
+	0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72,
+	0x22, 0x3d, 0x0a, 0x1a, 0x55, 0x73, 0x65, 0x72, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x42,
+	0x79, 0x49, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x44, 0x74, 0x6f, 0x12, 0x1f,
+	0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x74,
+	0x79, 0x70, 0x65, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x22,
+	0x3f, 0x0a, 0x1a, 0x55, 0x73, 0x65, 0x72, 0x47, 0x65, 0x74, 0x41, 0x6c, 0x6c, 0x55, 0x73, 0x65,
+	0x72, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x44, 0x74, 0x6f, 0x12, 0x21, 0x0a,
+	0x05, 0x75, 0x73, 0x65, 0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x74,
+	0x79, 0x70, 0x65, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x05, 0x75, 0x73, 0x65, 0x72, 0x73,
+	0x42, 0x17, 0x5a, 0x15, 0x2e, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2f, 0x74, 0x79, 0x70,
+	0x65, 0x73, 0x3b, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x33,
 }
 
 var (
@@ -180,17 +398,26 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_types_proto_goTypes = []any{
-	(*AuthRegisterRequestDto)(nil),  // 0: types.AuthRegisterRequestDto
-	(*AuthRegisterResponseDto)(nil), // 1: types.AuthRegisterResponseDto
+	(*User)(nil),                       // 0: types.User
+	(*UserCreateUserRequestDto)(nil),   // 1: types.UserCreateUserRequestDto
+	(*UserCreateUserResponseDto)(nil),  // 2: types.UserCreateUserResponseDto
+	(*UserGetUserByIdResponseDto)(nil), // 3: types.UserGetUserByIdResponseDto
+	(*UserGetAllUsersResponseDto)(nil), // 4: types.UserGetAllUsersResponseDto
+	(*timestamp.Timestamp)(nil),        // 5: google.protobuf.Timestamp
 }
 var file_types_proto_depIdxs = []int32{
-	0, // [0:0] is the sub-list for method output_type
-	0, // [0:0] is the sub-list for method input_type
-	0, // [0:0] is the sub-list for extension type_name
-	0, // [0:0] is the sub-list for extension extendee
-	0, // [0:0] is the sub-list for field type_name
+	5, // 0: types.User.created_at:type_name -> google.protobuf.Timestamp
+	5, // 1: types.User.updated_at:type_name -> google.protobuf.Timestamp
+	0, // 2: types.UserCreateUserResponseDto.user:type_name -> types.User
+	0, // 3: types.UserGetUserByIdResponseDto.user:type_name -> types.User
+	0, // 4: types.UserGetAllUsersResponseDto.users:type_name -> types.User
+	5, // [5:5] is the sub-list for method output_type
+	5, // [5:5] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -200,7 +427,7 @@ func file_types_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_types_proto_msgTypes[0].Exporter = func(v any, i int) any {
-			switch v := v.(*AuthRegisterRequestDto); i {
+			switch v := v.(*User); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -212,7 +439,43 @@ func file_types_proto_init() {
 			}
 		}
 		file_types_proto_msgTypes[1].Exporter = func(v any, i int) any {
-			switch v := v.(*AuthRegisterResponseDto); i {
+			switch v := v.(*UserCreateUserRequestDto); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_types_proto_msgTypes[2].Exporter = func(v any, i int) any {
+			switch v := v.(*UserCreateUserResponseDto); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_types_proto_msgTypes[3].Exporter = func(v any, i int) any {
+			switch v := v.(*UserGetUserByIdResponseDto); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_types_proto_msgTypes[4].Exporter = func(v any, i int) any {
+			switch v := v.(*UserGetAllUsersResponseDto); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -230,7 +493,7 @@ func file_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_types_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   2,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
