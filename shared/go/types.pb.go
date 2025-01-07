@@ -462,6 +462,53 @@ func (x *UserUpdateUserResponseDto) GetUser() *User {
 	return nil
 }
 
+type UserDeleteUserResponseDto struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	User *User `protobuf:"bytes,1,opt,name=user,proto3" json:"user,omitempty"`
+}
+
+func (x *UserDeleteUserResponseDto) Reset() {
+	*x = UserDeleteUserResponseDto{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_types_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *UserDeleteUserResponseDto) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*UserDeleteUserResponseDto) ProtoMessage() {}
+
+func (x *UserDeleteUserResponseDto) ProtoReflect() protoreflect.Message {
+	mi := &file_types_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use UserDeleteUserResponseDto.ProtoReflect.Descriptor instead.
+func (*UserDeleteUserResponseDto) Descriptor() ([]byte, []int) {
+	return file_types_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *UserDeleteUserResponseDto) GetUser() *User {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
 var File_types_proto protoreflect.FileDescriptor
 
 var file_types_proto_rawDesc = []byte{
@@ -521,9 +568,13 @@ var file_types_proto_rawDesc = []byte{
 	0x61, 0x74, 0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x44,
 	0x74, 0x6f, 0x12, 0x1f, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x0b, 0x2e, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04, 0x75,
-	0x73, 0x65, 0x72, 0x42, 0x17, 0x5a, 0x15, 0x2e, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2f,
-	0x74, 0x79, 0x70, 0x65, 0x73, 0x3b, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x62, 0x06, 0x70, 0x72,
-	0x6f, 0x74, 0x6f, 0x33,
+	0x73, 0x65, 0x72, 0x22, 0x3c, 0x0a, 0x19, 0x55, 0x73, 0x65, 0x72, 0x44, 0x65, 0x6c, 0x65, 0x74,
+	0x65, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x44, 0x74, 0x6f,
+	0x12, 0x1f, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x0b,
+	0x2e, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x04, 0x75, 0x73, 0x65,
+	0x72, 0x42, 0x17, 0x5a, 0x15, 0x2e, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2f, 0x74, 0x79,
+	0x70, 0x65, 0x73, 0x3b, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
@@ -538,7 +589,7 @@ func file_types_proto_rawDescGZIP() []byte {
 	return file_types_proto_rawDescData
 }
 
-var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
+var file_types_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
 var file_types_proto_goTypes = []any{
 	(*User)(nil),                       // 0: types.User
 	(*UserCreateUserRequestDto)(nil),   // 1: types.UserCreateUserRequestDto
@@ -547,20 +598,22 @@ var file_types_proto_goTypes = []any{
 	(*UserGetAllUsersResponseDto)(nil), // 4: types.UserGetAllUsersResponseDto
 	(*UserUpdateUserRequestDto)(nil),   // 5: types.UserUpdateUserRequestDto
 	(*UserUpdateUserResponseDto)(nil),  // 6: types.UserUpdateUserResponseDto
-	(*timestamp.Timestamp)(nil),        // 7: google.protobuf.Timestamp
+	(*UserDeleteUserResponseDto)(nil),  // 7: types.UserDeleteUserResponseDto
+	(*timestamp.Timestamp)(nil),        // 8: google.protobuf.Timestamp
 }
 var file_types_proto_depIdxs = []int32{
-	7, // 0: types.User.created_at:type_name -> google.protobuf.Timestamp
-	7, // 1: types.User.updated_at:type_name -> google.protobuf.Timestamp
+	8, // 0: types.User.created_at:type_name -> google.protobuf.Timestamp
+	8, // 1: types.User.updated_at:type_name -> google.protobuf.Timestamp
 	0, // 2: types.UserCreateUserResponseDto.user:type_name -> types.User
 	0, // 3: types.UserGetUserByIdResponseDto.user:type_name -> types.User
 	0, // 4: types.UserGetAllUsersResponseDto.users:type_name -> types.User
 	0, // 5: types.UserUpdateUserResponseDto.user:type_name -> types.User
-	6, // [6:6] is the sub-list for method output_type
-	6, // [6:6] is the sub-list for method input_type
-	6, // [6:6] is the sub-list for extension type_name
-	6, // [6:6] is the sub-list for extension extendee
-	0, // [0:6] is the sub-list for field type_name
+	0, // 6: types.UserDeleteUserResponseDto.user:type_name -> types.User
+	7, // [7:7] is the sub-list for method output_type
+	7, // [7:7] is the sub-list for method input_type
+	7, // [7:7] is the sub-list for extension type_name
+	7, // [7:7] is the sub-list for extension extendee
+	0, // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_types_proto_init() }
@@ -653,6 +706,18 @@ func file_types_proto_init() {
 				return nil
 			}
 		}
+		file_types_proto_msgTypes[7].Exporter = func(v any, i int) any {
+			switch v := v.(*UserDeleteUserResponseDto); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -660,7 +725,7 @@ func file_types_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_types_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   7,
+			NumMessages:   8,
 			NumExtensions: 0,
 			NumServices:   0,
 		},

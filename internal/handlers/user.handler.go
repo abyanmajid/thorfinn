@@ -92,7 +92,7 @@ func (h *HandlersCtx) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	utils.WriteJSON(w, shared.UserCreateUserResponseDto{
+	err = utils.WriteJSON(w, shared.UserCreateUserResponseDto{
 		User: &shared.User{
 			Id:              user.ID,
 			Name:            user.Name,
@@ -103,6 +103,10 @@ func (h *HandlersCtx) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 			UpdatedAt:       timestamppb.New(user.UpdatedAt.Time),
 		},
 	}, http.StatusCreated)
+	if err != nil {
+		utils.WriteErrorJSON(w, ErrInternalServerError, http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *HandlersCtx) HandleAllGetUsers(w http.ResponseWriter, r *http.Request) {
@@ -134,9 +138,13 @@ func (h *HandlersCtx) HandleAllGetUsers(w http.ResponseWriter, r *http.Request) 
 		protoUsers = append(protoUsers, pu)
 	}
 
-	utils.WriteJSON(w, &shared.UserGetAllUsersResponseDto{
+	err = utils.WriteJSON(w, &shared.UserGetAllUsersResponseDto{
 		Users: protoUsers,
 	}, http.StatusOK)
+	if err != nil {
+		utils.WriteErrorJSON(w, ErrInternalServerError, http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *HandlersCtx) HandleGetUserById(w http.ResponseWriter, r *http.Request) {
@@ -158,7 +166,7 @@ func (h *HandlersCtx) HandleGetUserById(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	utils.WriteJSON(w, shared.UserCreateUserResponseDto{
+	err = utils.WriteJSON(w, shared.UserCreateUserResponseDto{
 		User: &shared.User{
 			Id:              user.ID,
 			Name:            user.Name,
@@ -169,6 +177,10 @@ func (h *HandlersCtx) HandleGetUserById(w http.ResponseWriter, r *http.Request) 
 			UpdatedAt:       timestamppb.New(user.UpdatedAt.Time),
 		},
 	}, http.StatusCreated)
+	if err != nil {
+		utils.WriteErrorJSON(w, ErrInternalServerError, http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *HandlersCtx) HandleUpdateUserById(w http.ResponseWriter, r *http.Request) {
@@ -205,7 +217,7 @@ func (h *HandlersCtx) HandleUpdateUserById(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	utils.WriteJSON(w, shared.UserUpdateUserResponseDto{
+	err = utils.WriteJSON(w, shared.UserUpdateUserResponseDto{
 		User: &shared.User{
 			Id:              updatedUser.ID,
 			Name:            updatedUser.Name,
@@ -216,8 +228,44 @@ func (h *HandlersCtx) HandleUpdateUserById(w http.ResponseWriter, r *http.Reques
 			UpdatedAt:       timestamppb.New(updatedUser.UpdatedAt.Time),
 		},
 	}, http.StatusOK)
+	if err != nil {
+		utils.WriteErrorJSON(w, ErrInternalServerError, http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *HandlersCtx) HandleDeleteUserById(w http.ResponseWriter, r *http.Request) {
+	ip := utils.GetClientIP(r)
 
+	if ip != "" && !h.ratelimit.UserDeleteUserRateLimit.Consume(ip) {
+		utils.WriteErrorJSON(w, ErrRateLimitedError, http.StatusTooManyRequests)
+		return
+	}
+
+	id := chi.URLParam(r, "id")
+	deletedUser, err := h.queries.DeleteUser(r.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			utils.WriteErrorJSON(w, ErrNotFoundError, http.StatusNotFound)
+		} else {
+			utils.WriteErrorJSON(w, ErrInternalServerError, http.StatusInternalServerError)
+		}
+		return
+	}
+
+	err = utils.WriteJSON(w, &shared.UserDeleteUserResponseDto{
+		User: &shared.User{
+			Id:              deletedUser.ID,
+			Name:            deletedUser.Name,
+			Email:           deletedUser.Email,
+			IsEmailVerified: deletedUser.IsEmailVerified.Bool,
+			Is_2FaEnabled:   deletedUser.Is2faEnabled.Bool,
+			CreatedAt:       timestamppb.New(deletedUser.CreatedAt.Time),
+			UpdatedAt:       timestamppb.New(deletedUser.UpdatedAt.Time),
+		},
+	}, http.StatusOK)
+	if err != nil {
+		utils.WriteErrorJSON(w, ErrInternalServerError, http.StatusInternalServerError)
+		return
+	}
 }

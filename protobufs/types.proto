@@ -47,3 +47,7 @@ message UserUpdateUserRequestDto {
 message UserUpdateUserResponseDto {
   User user = 1;
 }
+
+message UserDeleteUserResponseDto {
+  User user = 1;
+}
