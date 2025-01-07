@@ -2,6 +2,8 @@ package handlers
 
 import (
 	"errors"
+	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/lucsky/cuid"
@@ -19,19 +21,7 @@ const (
 	RoleAdmin Role = "admin"
 )
 
-type UserHandlers struct {
-	queries   *database.Queries
-	ratelimit *security.AppRateLimiters
-}
-
-func NewUserHandlers(queries *database.Queries, appRateLimiters *security.AppRateLimiters) UserHandlers {
-	return UserHandlers{
-		queries:   queries,
-		ratelimit: appRateLimiters,
-	}
-}
-
-func (h *UserHandlers) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
+func (h *HandlersCtx) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 	ip := utils.GetClientIP(r)
 
 	if ip != "" && !h.ratelimit.AuthRegisterRateLimit.Consume(ip) {
@@ -82,8 +72,12 @@ func (h *UserHandlers) HandleCreateUser(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
+	id := cuid.New()
+
+	slog.Debug(fmt.Sprintf("Inserting a new user of id %s...", id))
+
 	err = h.queries.InsertUser(r.Context(), database.InsertUserParams{
-		ID:           cuid.New(),
+		ID:           id,
 		Name:         body.Name,
 		Email:        body.Email,
 		PasswordHash: passwordHash,
@@ -99,4 +93,20 @@ func (h *UserHandlers) HandleCreateUser(w http.ResponseWriter, r *http.Request) 
 		Status:  http.StatusCreated,
 		Message: "Successfully created a user.",
 	}, http.StatusCreated)
+}
+
+func (h *HandlersCtx) HandleAllGetUsers(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *HandlersCtx) HandleGetUserById(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *HandlersCtx) HandleUpdateUserById(w http.ResponseWriter, r *http.Request) {
+
+}
+
+func (h *HandlersCtx) HandleDeleteUserById(w http.ResponseWriter, r *http.Request) {
+
 }

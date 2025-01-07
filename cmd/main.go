@@ -20,10 +20,14 @@ type OrionAPI struct {
 }
 
 func (cfg *OrionAPI) NewAPI() chi.Router {
-	userHandlers := handlers.NewUserHandlers(cfg.queries, &cfg.appRateLimiters)
+	handlersCtx := handlers.New(cfg.queries, &cfg.appRateLimiters)
 
 	api := chi.NewRouter()
-	api.Post("/users", userHandlers.HandleCreateUser)
+	api.Post("/users", handlersCtx.HandleCreateUser)
+	api.Get("/users", handlersCtx.HandleAllGetUsers)
+	api.Get("/users/:id", handlersCtx.HandleGetUserById)
+	api.Put("/users/:id", handlersCtx.HandleUpdateUserById)
+	api.Delete("users/:id", handlersCtx.HandleDeleteUserById)
 
 	return api
 }
