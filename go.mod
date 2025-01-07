@@ -1,4 +1,4 @@
-module github.com/clyde-sh/novus
+module github.com/clyde-sh/orion
 
 go 1.22.4
 

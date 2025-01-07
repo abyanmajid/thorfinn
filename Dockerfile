@@ -9,14 +9,14 @@ RUN go mod download
 
 # Copy the application source code and build the binary
 COPY . .
-RUN CGO_ENABLED=0 GOOS=linux go build -o clyde-novus ./cmd
+RUN CGO_ENABLED=0 GOOS=linux go build -o clyde-orion ./cmd
 
 ### 
 ## Step 2: Runtime stage
 FROM alpine:3.20
 
 # Copy only the binary from the build stage to the final image
-COPY --from=builder /app/clyde-novus /
+COPY --from=builder /app/clyde-orion /
 
 # Set the entry point for the container
-ENTRYPOINT ["/clyde-novus"]
+ENTRYPOINT ["/clyde-orion"]

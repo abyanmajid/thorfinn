@@ -6,10 +6,10 @@ import (
 
 	"github.com/lucsky/cuid"
 
-	"github.com/clyde-sh/novus/internal/database"
-	"github.com/clyde-sh/novus/internal/security"
-	"github.com/clyde-sh/novus/internal/utils"
-	shared "github.com/clyde-sh/novus/shared/go"
+	"github.com/clyde-sh/orion/internal/database"
+	"github.com/clyde-sh/orion/internal/security"
+	"github.com/clyde-sh/orion/internal/utils"
+	shared "github.com/clyde-sh/orion/shared/go"
 )
 
 type Role string

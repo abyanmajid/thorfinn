@@ -5,7 +5,7 @@ import (
 	"log/slog"
 	"time"
 
-	"github.com/clyde-sh/novus/internal/database"
+	"github.com/clyde-sh/orion/internal/database"
 )
 
 func ScheduleDailyDatabaseCleanUp(queries *database.Queries) {

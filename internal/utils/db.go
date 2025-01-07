@@ -6,7 +6,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/clyde-sh/novus/internal/database"
+	"github.com/clyde-sh/orion/internal/database"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgtype"
 )

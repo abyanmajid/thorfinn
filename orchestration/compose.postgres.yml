@@ -1,6 +1,6 @@
 services:
-  novus:
-    container_name: clyde-novus
+  orion:
+    container_name: clyde-orion
     build:
       context: ../
       dockerfile: Dockerfile
