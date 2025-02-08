@@ -1,0 +1,29 @@
+services:
+  postgres:
+    container_name: thorfinn-postgres
+    image: postgres:17
+    environment:
+      POSTGRES_USER: thorfinn
+      POSTGRES_PASSWORD: thorfinn
+      POSTGRES_DB: thorfinn
+    ports:
+      - "5433:5432"
+    networks:
+      - thorfinn-network
+    volumes:
+      - thorfinn-data:/var/lib/postgresql/data 
+
+  mailhog:
+    container_name: thorfinn-mailhog
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "1026:1025" # The SMTP port for sending emails
+      - "8026:8025" # The Mailhog email inbox UI port
+    networks:
+      - thorfinn-network
+
+networks:
+  thorfinn-network:
+
+volumes:
+  thorfinn-data:

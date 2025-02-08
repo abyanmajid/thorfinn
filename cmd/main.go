@@ -1,64 +1,35 @@
 package main
 
 import (
-	"fmt"
-	"log"
-	"log/slog"
-	"net/http"
-
-	"github.com/clyde-sh/orion/internal/database"
-	"github.com/clyde-sh/orion/internal/handlers"
-	"github.com/clyde-sh/orion/internal/security"
-	"github.com/clyde-sh/orion/internal/utils"
-	"github.com/go-chi/chi/v5"
+	"github.com/abyanmajid/matcha"
+	"github.com/abyanmajid/matcha/logger"
+	"github.com/abyanmajid/matcha/openapi"
+	"github.com/abyanmajid/matcha/reference"
+	"github.com/abyanmajid/thorfinn/internal"
+	"github.com/abyanmajid/thorfinn/internal/api"
 )
 
-type OrionAPI struct {
-	env             *utils.Env
-	appRateLimiters security.AppRateLimiters
-	queries         *database.Queries
-}
-
-func (cfg *OrionAPI) NewAPI() chi.Router {
-	handlersCtx := handlers.New(cfg.queries, &cfg.appRateLimiters)
-
-	api := chi.NewRouter()
-	api.Post("/users", handlersCtx.HandleCreateUser)
-	api.Get("/users", handlersCtx.HandleAllGetUsers)
-	api.Get("/users/:id", handlersCtx.HandleGetUserById)
-	api.Put("/users/:id", handlersCtx.HandleUpdateUserById)
-	api.Delete("users/:id", handlersCtx.HandleDeleteUserById)
-
-	return api
-}
-
 func main() {
-	env, err := utils.LoadEnv()
+	config := internal.ConfigureEnv()
+
+	resources, err := api.CreateApiResources(config)
 	if err != nil {
-		log.Fatalf("Error loading environment variables: %v", err)
+		logger.Fatal("Failed to create resources: %v", err)
 	}
 
-	queries, err := utils.CreateQueryClient()
-	if err != nil {
-		log.Fatal(err)
-	}
+	app := matcha.New()
 
-	appRateLimiters := security.InitializeAppRateLimiters()
+	app.Documentation("/docs", openapi.Meta{
+		OpenAPI:        "3.0.0",
+		PackageName:    "Thorfinn API",
+		PackageVersion: "0.1.0",
+	})
 
-	orion := &OrionAPI{
-		env:             env,
-		queries:         queries,
-		appRateLimiters: appRateLimiters,
-	}
+	app.Post("/register", resources.AuthResources.Register)
 
-	go utils.ScheduleDailyDatabaseCleanUp(queries)
+	app.Reference("/reference", &reference.Options{
+		Source: "/docs",
+	})
 
-	r := chi.NewRouter()
-	r.Mount("/api", orion.NewAPI())
-
-	slog.Info(fmt.Sprintf("Clyde Noxus API is now running live on port %d...", orion.env.PORT))
-
-	if err := http.ListenAndServe(fmt.Sprintf(":%d", orion.env.PORT), r); err != nil {
-		slog.Error("Failed to start server", "error", err)
-	}
+	app.Serve(":8080")
 }

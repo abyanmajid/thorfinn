@@ -1,3 +1,0 @@
-# OWASP Checklist
-
-WIP.
