@@ -81,7 +81,7 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 
 		tokenUrlSafe := security.EncodeBase64(encryptedSignedToken)
 
-		verificationLink := fmt.Sprintf("%s/auth/verify-email?token=%s", h.config.Origin, tokenUrlSafe)
+		verificationLink := fmt.Sprintf("%s/auth/verify-email?token=%s", h.config.FrontendUrl, tokenUrlSafe)
 		err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Email Verification", "email_verification", map[string]any{
 			"VerificationLink": verificationLink,
 		})
