@@ -34,8 +34,7 @@ make dev
 
 The server requires the following environment variables:
 
-- `DEBUG`: Whether to run in debug mode.
-- `ORIGIN`: The origin of the server.
+- `ORIGIN`: The URL of the server.
 - `FRONTEND_URL`: The URL of the frontend.
 - `DATABASE_URL`: The database URL.
 - `SMTP_HOST`: The SMTP host.
