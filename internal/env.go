@@ -12,12 +12,13 @@ type EnvConfig struct {
 	FrontendUrl      string `name:"FRONTEND_URL" required:"true"`
 	DatabaseUrl      string `name:"DATABASE_URL" required:"true"`
 	SmtpHost         string `name:"SMTP_HOST" required:"true"`
-	SmtpPort         int    `name:"SMTP_PORT" required:"true"`
+	SmtpPort         string `name:"SMTP_PORT" required:"true"`
 	SmtpUser         string `name:"SMTP_USER" required:"true"`
 	SmtpPassword     string `name:"SMTP_PASSWORD" required:"true"`
 	EmailFrom        string `name:"EMAIL_FROM" required:"true"`
 	JwtSecret        string `name:"JWT_SECRET" required:"true"`
 	EncryptionSecret string `name:"ENCRYPTION_SECRET" required:"true"`
+	EncryptionIv     string `name:"ENCRYPTION_IV" required:"true"`
 }
 
 func ConfigureEnv() *EnvConfig {

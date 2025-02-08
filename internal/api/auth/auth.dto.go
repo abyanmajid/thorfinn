@@ -1,11 +1,25 @@
 package auth_features
 
+import (
+	"errors"
+	"net/http"
+
+	"github.com/abyanmajid/matcha/ctx"
+)
+
+func GenericError[T any]() *ctx.Response[T] {
+	return &ctx.Response[T]{
+		Error:      errors.New("an error occurred while processing your request"),
+		StatusCode: http.StatusInternalServerError,
+	}
+}
+
 type RegisterRequest struct {
-	Email           string `json:"email" validate:"required,email"`
-	Password        string `json:"password" validate:"required,min=8"`
-	ConfirmPassword string `json:"confirm_password" validate:"required,eqfield=Password"`
+	Email           string
+	Password        string
+	ConfirmPassword string
 }
 
 type RegisterResponse struct {
-	Message string `json:"message"`
+	Message string
 }

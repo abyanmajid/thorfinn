@@ -30,6 +30,8 @@ Serve the application on port 8080:
 make dev
 ```
 
+You should be able to see the server's OpenAPI specification at `/docs`, and the Scalar API Reference Client at `/reference`
+
 ## Production
 
 The server requires the following environment variables:

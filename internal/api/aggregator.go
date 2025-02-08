@@ -1,8 +1,10 @@
 package api
 
 import (
+	"github.com/abyanmajid/matcha/email"
 	"github.com/abyanmajid/thorfinn/internal"
 	auth_features "github.com/abyanmajid/thorfinn/internal/api/auth"
+	"github.com/abyanmajid/thorfinn/internal/database"
 )
 
 type Resources struct {
@@ -13,8 +15,8 @@ type Handlers struct {
 	authHandlers *auth_features.AuthHandlers
 }
 
-func aggregateHandlers(config *internal.EnvConfig) *Handlers {
-	authHandlers := auth_features.NewHandlers(config)
+func aggregateHandlers(config *internal.EnvConfig, queries *database.Queries, mailer *email.Client) *Handlers {
+	authHandlers := auth_features.NewHandlers(config, queries, mailer)
 
 	return &Handlers{
 		authHandlers: authHandlers,
