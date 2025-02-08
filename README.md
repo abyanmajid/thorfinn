@@ -1,6 +1,8 @@
 # Thorfinn
 
-**Thorfinn** is a simple, framework-agnostic, Go-extensible auth server that provides a complete credentials + email OTP authentication solution.
+**Thorfinn** is a simple, framework-agnostic authentication server built with the [Matcha framework](https://github.com/abyanmajid/matcha). It provides a complete credentials + email OTP authentication solution.
+
+You can use **Thorfinn** as a standalone authentication microservice, or as a starter for your RESTful backend.
 
 ## Development
 
@@ -14,6 +16,12 @@ Serve local postgres (port 5433) and mailhog (port 8026) containers:
 
 ```
 docker-compose up -d
+```
+
+Apply migrations (NOTE: To down-migrate, run `make migrate-down`):
+
+```
+make migrate-up
 ```
 
 Serve the application on port 8080:
