@@ -1,0 +1,21 @@
+-- +goose Up
+
+CREATE TABLE IF NOT EXISTS thorfinn_users (
+    id TEXT NOT NULL PRIMARY KEY,
+    email TEXT NOT NULL UNIQUE,
+    password_hash TEXT NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS thorfinn_blacklisted_tokens (
+    id TEXT NOT NULL PRIMARY KEY,
+    token TEXT NOT NULL,    
+    created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- +goose Down
+
+DROP TABLE IF EXISTS thorfinn_users;
+DROP TABLE IF EXISTS thorfinn_blacklisted_tokens;

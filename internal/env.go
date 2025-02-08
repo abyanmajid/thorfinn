@@ -1,12 +1,13 @@
 package internal
 
 import (
+	"flag"
+
 	"github.com/abyanmajid/matcha/env"
 	"github.com/abyanmajid/matcha/logger"
 )
 
 type EnvConfig struct {
-	Debug            bool   `name:"DEBUG" required:"true"`
 	Origin           string `name:"ORIGIN" required:"true"`
 	FrontendUrl      string `name:"FRONTEND_URL" required:"true"`
 	DatabaseUrl      string `name:"DATABASE_URL" required:"true"`
@@ -20,8 +21,14 @@ type EnvConfig struct {
 }
 
 func ConfigureEnv() *EnvConfig {
-	if err := env.Dotenv(".env"); err != nil {
-		logger.Fatal("Warning: No .env file found.")
+	dev := flag.Bool("dev", false, "Set the debug level (e.g., true or false)")
+
+	flag.Parse()
+
+	if *dev {
+		if err := env.Dotenv(".env"); err != nil {
+			logger.Fatal("Warning: No .env file found.")
+		}
 	}
 
 	var config EnvConfig
