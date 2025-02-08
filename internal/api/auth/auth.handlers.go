@@ -36,7 +36,6 @@ const (
 )
 
 func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[RegisterResponse] {
-	// Step 1 - Early return if user already exists
 	_, err := h.queries.FindUserByEmail(c.Request.Context(), c.Body.Email)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		logger.Debug("Error finding user by email: %v", err)
@@ -44,22 +43,17 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 	}
 
 	if errors.Is(err, sql.ErrNoRows) {
-		// Step 2 - Validate inputs
 		err := validateRegisterPayload(c.Body)
 		if err != nil {
-			return &ctx.Response[RegisterResponse]{
-				StatusCode: http.StatusBadRequest,
-				Error:      err,
-			}
+			return CustomError[RegisterResponse](err.Error())
 		}
 
-		// Step 3 - Create user
 		passwordHash, err := security.Hash([]byte(c.Body.Password))
 		if err != nil {
 			return GenericError[RegisterResponse]()
 		}
 
-		_, err = h.queries.CreateUser(c.Request.Context(), database.CreateUserParams{
+		user, err := h.queries.CreateUser(c.Request.Context(), database.CreateUserParams{
 			ID:           uuid.New().String(),
 			Email:        c.Body.Email,
 			PasswordHash: string(passwordHash.Hash),
@@ -68,9 +62,8 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 			return GenericError[RegisterResponse]()
 		}
 
-		// Step 4 - Create and sign JWT
 		token := security.NewJWT(security.JwtClaims{
-			"user_id": c.Body.Email,
+			"user_id": user.ID,
 			"iat":     time.Now().Unix(),
 			"exp":     time.Now().Add(time.Minute * 10).Unix(),
 		})
@@ -88,7 +81,6 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 
 		tokenUrlSafe := security.EncodeBase64(encryptedSignedToken)
 
-		// Step 5 - Send confirmation email
 		verificationLink := fmt.Sprintf("%s/auth/verify-email?token=%s", h.config.Origin, tokenUrlSafe)
 		err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Email Verification", "email_verification", map[string]any{
 			"VerificationLink": verificationLink,
@@ -102,6 +94,55 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 	return &ctx.Response[RegisterResponse]{
 		Response: RegisterResponse{
 			Message: RegisterSuccessMessage,
+		},
+		StatusCode: http.StatusCreated,
+		Error:      nil,
+	}
+}
+
+func (h *AuthHandlers) VerifyEmail(c *ctx.Request[ConfirmEmailRequest]) *ctx.Response[ConfirmEmailResponse] {
+	urlSafeToken := c.GetQueryParam("token")
+	if urlSafeToken == "" {
+		logger.Error("Token not found")
+		return CustomError[ConfirmEmailResponse]("token not found")
+	}
+
+	encryptedToken, err := security.DecodeBase64(urlSafeToken)
+	if err != nil {
+		logger.Error("Error decoding token: %v", err)
+		return GenericError[ConfirmEmailResponse]()
+	}
+
+	tokenByte, err := security.Decrypt([]byte(encryptedToken), []byte(h.config.EncryptionSecret))
+	if err != nil {
+		logger.Error("Error decrypting token: %v", err)
+		return GenericError[ConfirmEmailResponse]()
+	}
+	verifiedToken, err := security.VerifyJWT(string(tokenByte), []byte(h.config.JwtSecret))
+	if err != nil {
+		logger.Error("Error verifying token: %v", err)
+		return CustomError[ConfirmEmailResponse]("token is invalid or has expired")
+	}
+
+	userIdInterface := verifiedToken.JwtClaims["user_id"]
+	userId, err := validateUserIdInterface(userIdInterface)
+	if err != nil {
+		logger.Error("Error validating user id: %v", err)
+		return CustomError[ConfirmEmailResponse](err.Error())
+	}
+
+	_, err = h.queries.UpdateUserVerified(c.Request.Context(), database.UpdateUserVerifiedParams{
+		ID:       userId,
+		Verified: true,
+	})
+	if err != nil {
+		logger.Error("Error updating user: %v", err)
+		return GenericError[ConfirmEmailResponse]()
+	}
+
+	return &ctx.Response[ConfirmEmailResponse]{
+		Response: ConfirmEmailResponse{
+			Message: "Email confirmed",
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,

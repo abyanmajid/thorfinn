@@ -24,9 +24,11 @@ type ThorfinnOtpCode struct {
 }
 
 type ThorfinnUser struct {
-	ID           string
-	Email        string
-	PasswordHash string
-	CreatedAt    pgtype.Timestamptz
-	UpdatedAt    pgtype.Timestamptz
+	ID               string
+	Email            string
+	PasswordHash     string
+	Verified         bool
+	TwoFactorEnabled bool
+	CreatedAt        pgtype.Timestamptz
+	UpdatedAt        pgtype.Timestamptz
 }

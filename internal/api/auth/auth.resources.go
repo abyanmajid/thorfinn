@@ -51,3 +51,36 @@ func (r *AuthResources) RegisterResource() (*openapi.Resource, error) {
 
 	return &resource, nil
 }
+
+func (r *AuthResources) ConfirmEmailResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(ConfirmEmailRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(ConfirmEmailResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Verify email",
+		Description: "Verify email",
+		Schema: openapi.Schema{
+			Parameters: []openapi.Parameter{
+				openapi.Param.Path("token", "The verification token"),
+			},
+			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "Email confirmed",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("VerifyEmail", doc, r.handlers.VerifyEmail)
+
+	return &resource, nil
+}

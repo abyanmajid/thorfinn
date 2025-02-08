@@ -14,12 +14,25 @@ func GenericError[T any]() *ctx.Response[T] {
 	}
 }
 
+func CustomError[T any](message string) *ctx.Response[T] {
+	return &ctx.Response[T]{
+		Error:      errors.New(message),
+		StatusCode: http.StatusInternalServerError,
+	}
+}
+
 type RegisterRequest struct {
-	Email           string
-	Password        string
-	ConfirmPassword string
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirm_password"`
 }
 
 type RegisterResponse struct {
-	Message string
+	Message string `json:"message"`
+}
+
+type ConfirmEmailRequest struct{}
+
+type ConfirmEmailResponse struct {
+	Message string `json:"message"`
 }

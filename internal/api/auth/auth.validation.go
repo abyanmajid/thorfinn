@@ -24,3 +24,13 @@ func validateRegisterPayload(payload RegisterRequest) error {
 
 	return nil
 }
+
+func validateUserIdInterface(userIdInterface interface{}) (string, error) {
+	userId := v.String("UserId").Parse(userIdInterface)
+
+	if !userId.Ok {
+		return "", errors.New("invalid user id")
+	}
+
+	return userId.Value, nil
+}

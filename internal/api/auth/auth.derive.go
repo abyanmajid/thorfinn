@@ -3,7 +3,8 @@ package auth_features
 import "github.com/abyanmajid/matcha/openapi"
 
 type DerivedAuthResources struct {
-	Register *openapi.Resource
+	Register    *openapi.Resource
+	VerifyEmail *openapi.Resource
 }
 
 func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
@@ -13,7 +14,13 @@ func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
 		return nil, err
 	}
 
+	confirmEmailResource, err := authResources.ConfirmEmailResource()
+	if err != nil {
+		return nil, err
+	}
+
 	return &DerivedAuthResources{
-		Register: registerResource,
+		Register:    registerResource,
+		VerifyEmail: confirmEmailResource,
 	}, nil
 }

@@ -43,6 +43,7 @@ func main() {
 	})
 
 	app.Post("/auth/register", resources.AuthResources.Register)
+	app.Put("/auth/verify-email", resources.AuthResources.VerifyEmail)
 
 	app.Reference("/reference", &reference.Options{
 		Source: "/docs",

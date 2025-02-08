@@ -10,7 +10,7 @@ import (
 )
 
 const createUser = `-- name: CreateUser :one
-INSERT INTO thorfinn_users (id, email, password_hash) VALUES ($1, $2, $3) RETURNING id, email, password_hash, created_at, updated_at
+INSERT INTO thorfinn_users (id, email, password_hash) VALUES ($1, $2, $3) RETURNING id, email, password_hash, verified, two_factor_enabled, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -26,6 +26,8 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (Thorfin
 		&i.ID,
 		&i.Email,
 		&i.PasswordHash,
+		&i.Verified,
+		&i.TwoFactorEnabled,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -42,7 +44,7 @@ func (q *Queries) DeleteUser(ctx context.Context, id string) error {
 }
 
 const findUserByEmail = `-- name: FindUserByEmail :one
-SELECT id, email, password_hash, created_at, updated_at FROM thorfinn_users WHERE email = $1
+SELECT id, email, password_hash, verified, two_factor_enabled, created_at, updated_at FROM thorfinn_users WHERE email = $1
 `
 
 func (q *Queries) FindUserByEmail(ctx context.Context, email string) (ThorfinnUser, error) {
@@ -52,6 +54,8 @@ func (q *Queries) FindUserByEmail(ctx context.Context, email string) (ThorfinnUs
 		&i.ID,
 		&i.Email,
 		&i.PasswordHash,
+		&i.Verified,
+		&i.TwoFactorEnabled,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -59,7 +63,7 @@ func (q *Queries) FindUserByEmail(ctx context.Context, email string) (ThorfinnUs
 }
 
 const findUserById = `-- name: FindUserById :one
-SELECT id, email, password_hash, created_at, updated_at FROM thorfinn_users WHERE id = $1
+SELECT id, email, password_hash, verified, two_factor_enabled, created_at, updated_at FROM thorfinn_users WHERE id = $1
 `
 
 func (q *Queries) FindUserById(ctx context.Context, id string) (ThorfinnUser, error) {
@@ -69,6 +73,8 @@ func (q *Queries) FindUserById(ctx context.Context, id string) (ThorfinnUser, er
 		&i.ID,
 		&i.Email,
 		&i.PasswordHash,
+		&i.Verified,
+		&i.TwoFactorEnabled,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
@@ -76,7 +82,7 @@ func (q *Queries) FindUserById(ctx context.Context, id string) (ThorfinnUser, er
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, email, password_hash, created_at, updated_at FROM thorfinn_users ORDER BY created_at DESC
+SELECT id, email, password_hash, verified, two_factor_enabled, created_at, updated_at FROM thorfinn_users ORDER BY created_at DESC
 `
 
 func (q *Queries) ListUsers(ctx context.Context) ([]ThorfinnUser, error) {
@@ -92,6 +98,8 @@ func (q *Queries) ListUsers(ctx context.Context) ([]ThorfinnUser, error) {
 			&i.ID,
 			&i.Email,
 			&i.PasswordHash,
+			&i.Verified,
+			&i.TwoFactorEnabled,
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
@@ -105,23 +113,27 @@ func (q *Queries) ListUsers(ctx context.Context) ([]ThorfinnUser, error) {
 	return items, nil
 }
 
-const updateUser = `-- name: UpdateUser :one
-UPDATE thorfinn_users SET email = $2, password_hash = $3 WHERE id = $1 RETURNING id, email, password_hash, created_at, updated_at
+const updateUserVerified = `-- name: UpdateUserVerified :one
+UPDATE thorfinn_users
+SET verified = $2
+WHERE id = $1
+RETURNING id, email, password_hash, verified, two_factor_enabled, created_at, updated_at
 `
 
-type UpdateUserParams struct {
-	ID           string
-	Email        string
-	PasswordHash string
+type UpdateUserVerifiedParams struct {
+	ID       string
+	Verified bool
 }
 
-func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (ThorfinnUser, error) {
-	row := q.db.QueryRow(ctx, updateUser, arg.ID, arg.Email, arg.PasswordHash)
+func (q *Queries) UpdateUserVerified(ctx context.Context, arg UpdateUserVerifiedParams) (ThorfinnUser, error) {
+	row := q.db.QueryRow(ctx, updateUserVerified, arg.ID, arg.Verified)
 	var i ThorfinnUser
 	err := row.Scan(
 		&i.ID,
 		&i.Email,
 		&i.PasswordHash,
+		&i.Verified,
+		&i.TwoFactorEnabled,
 		&i.CreatedAt,
 		&i.UpdatedAt,
 	)
