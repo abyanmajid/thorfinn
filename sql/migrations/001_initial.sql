@@ -4,6 +4,8 @@ CREATE TABLE IF NOT EXISTS thorfinn_users (
     id TEXT NOT NULL PRIMARY KEY,
     email TEXT NOT NULL UNIQUE,
     password_hash TEXT NOT NULL,
+    verified BOOLEAN NOT NULL DEFAULT FALSE,
+    two_factor_enabled BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT password_min_length CHECK (length(password_hash) >= 8)

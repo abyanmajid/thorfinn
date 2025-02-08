@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/google/uuid"
+
 	"github.com/abyanmajid/matcha/ctx"
 	"github.com/abyanmajid/matcha/email"
 	"github.com/abyanmajid/matcha/logger"
@@ -51,12 +53,26 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 			}
 		}
 
-		// Step 3 - Create and sign JWT
+		// Step 3 - Create user
+		passwordHash, err := security.Hash([]byte(c.Body.Password))
+		if err != nil {
+			return GenericError[RegisterResponse]()
+		}
+
+		_, err = h.queries.CreateUser(c.Request.Context(), database.CreateUserParams{
+			ID:           uuid.New().String(),
+			Email:        c.Body.Email,
+			PasswordHash: string(passwordHash.Hash),
+		})
+		if err != nil {
+			return GenericError[RegisterResponse]()
+		}
+
+		// Step 4 - Create and sign JWT
 		token := security.NewJWT(security.JwtClaims{
-			"sub":  "1234567890",
-			"name": c.Body.Email,
-			"iat":  time.Now().Unix(),
-			"exp":  time.Now().Add(time.Minute * 10).Unix(),
+			"user_id": c.Body.Email,
+			"iat":     time.Now().Unix(),
+			"exp":     time.Now().Add(time.Minute * 10).Unix(),
 		})
 
 		signedToken, err := token.Sign([]byte(h.config.JwtSecret))
@@ -72,7 +88,7 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 
 		tokenUrlSafe := security.EncodeBase64(encryptedSignedToken)
 
-		// Step 4 - Send confirmation email
+		// Step 5 - Send confirmation email
 		verificationLink := fmt.Sprintf("%s/auth/verify-email?token=%s", h.config.Origin, tokenUrlSafe)
 		err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Email Verification", "email_verification", map[string]any{
 			"VerificationLink": verificationLink,
