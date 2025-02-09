@@ -10,6 +10,8 @@ type DerivedAuthResources struct {
 	SendEmailVerification *openapi.Resource
 	SendPasswordResetLink *openapi.Resource
 	ResetPassword         *openapi.Resource
+	OtpSend               *openapi.Resource
+	OtpVerify             *openapi.Resource
 }
 
 func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
@@ -49,6 +51,16 @@ func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
 		return nil, err
 	}
 
+	otpSendResource, err := authResources.OtpSendResource()
+	if err != nil {
+		return nil, err
+	}
+
+	otpVerifyResource, err := authResources.OtpVerifyResource()
+	if err != nil {
+		return nil, err
+	}
+
 	return &DerivedAuthResources{
 		Register:              registerResource,
 		VerifyEmail:           confirmEmailResource,
@@ -57,5 +69,7 @@ func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
 		SendEmailVerification: sendEmailVerificationResource,
 		SendPasswordResetLink: sendPasswordResetLinkResource,
 		ResetPassword:         resetPasswordResource,
+		OtpSend:               otpSendResource,
+		OtpVerify:             otpVerifyResource,
 	}, nil
 }

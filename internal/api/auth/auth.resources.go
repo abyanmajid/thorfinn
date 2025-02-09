@@ -227,3 +227,63 @@ func (r *AuthResources) ResetPasswordResource() (*openapi.Resource, error) {
 
 	return &resource, nil
 }
+
+func (r *AuthResources) OtpSendResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(OtpSendRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(OtpSendResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Send an OTP code",
+		Description: "Send an OTP code to the user",
+		Schema: openapi.Schema{
+			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "OTP code sent",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("OtpSend", doc, r.handlers.OtpSend)
+
+	return &resource, nil
+}
+
+func (r *AuthResources) OtpVerifyResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(OtpVerifyRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(OtpVerifyResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Verify an OTP code",
+		Description: "Verify an OTP code",
+		Schema: openapi.Schema{
+			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "OTP code verified",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("OtpVerify", doc, r.handlers.OtpVerify)
+
+	return &resource, nil
+}

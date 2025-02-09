@@ -1,8 +1,10 @@
 package auth_features
 
 import (
+	"crypto/rand"
 	"errors"
 	"fmt"
+	"math/big"
 	"net/http"
 	"time"
 
@@ -41,6 +43,20 @@ func createVerificationLink[T any](opts VerificationLinkOpts[T]) (string, error)
 	verificationLink := fmt.Sprintf("%s/%s?token=%s", opts.Config.FrontendUrl, opts.Path, tokenUrlSafe)
 
 	return verificationLink, nil
+}
+
+const otpCharset = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+
+func generateOtp(length int) (string, error) {
+	bytes := make([]byte, length)
+	for i := range bytes {
+		randomByte, err := rand.Int(rand.Reader, big.NewInt(int64(len(otpCharset))))
+		if err != nil {
+			return "", err
+		}
+		bytes[i] = otpCharset[randomByte.Int64()]
+	}
+	return string(bytes), nil
 }
 
 func processVerificationToken(token string, config *internal.EnvConfig) (security.JwtClaims, error) {

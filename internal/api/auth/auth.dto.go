@@ -61,15 +61,17 @@ type ResetPasswordResponse struct {
 }
 
 type OtpSendRequest struct {
-	Token string `json:"token"`
+	Email string `json:"email"`
 }
 
 type OtpSendResponse struct {
-	Message string `json:"message"`
+	Message   string `json:"message"`
+	OtpCodeId string `json:"otp_code_id"`
 }
 
 type OtpVerifyRequest struct {
-	Token string `json:"token"`
+	OtpCodeId string `json:"otp_code_id"`
+	OtpCode   string `json:"otp_code"`
 }
 
 type OtpVerifyResponse struct {

@@ -18,6 +18,8 @@ const (
 	AuthSendEmailVerificationPath = "/auth/send-email-verification"
 	AuthSendPasswordResetLinkPath = "/auth/send-password-reset-link"
 	AuthResetPasswordPath         = "/auth/reset-password"
+	AuthOtpSendPath               = "/auth/otp/send"
+	AuthOtpVerifyPath             = "/auth/otp/verify"
 
 	UsersGetAllPath = "/users"
 	UsersGetPath    = "/users/{id}"
@@ -66,8 +68,8 @@ func main() {
 	app.Post(AuthSendEmailVerificationPath, resources.AuthResources.SendEmailVerification)
 	app.Post(AuthSendPasswordResetLinkPath, resources.AuthResources.SendPasswordResetLink)
 	app.Put(AuthResetPasswordPath, resources.AuthResources.ResetPassword)
-	// otp send
-	// otp verify
+	app.Post(AuthOtpSendPath, resources.AuthResources.OtpSend)
+	app.Post(AuthOtpVerifyPath, resources.AuthResources.OtpVerify)
 
 	// User management resources
 	app.Get(UsersGetAllPath, resources.UsersResources.GetAllUsers)

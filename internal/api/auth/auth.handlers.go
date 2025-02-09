@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/google/uuid"
+	"github.com/jackc/pgx/v5/pgtype"
 
 	"github.com/abyanmajid/matcha/ctx"
 	"github.com/abyanmajid/matcha/email"
@@ -258,7 +260,6 @@ func (h *AuthHandlers) SendPasswordResetLink(c *ctx.Request[SendPasswordResetReq
 	}
 
 	if !errors.Is(err, sql.ErrNoRows) {
-
 		logger.Debug("Creating verification link")
 		verificationLink, err := createVerificationLink(VerificationLinkOpts[SendPasswordResetRequest]{
 			Request: c,
@@ -328,6 +329,92 @@ func (h *AuthHandlers) ResetPassword(c *ctx.Request[ResetPasswordRequest]) *ctx.
 	return &ctx.Response[ResetPasswordResponse]{
 		Response: ResetPasswordResponse{
 			Message: "Password has been reset",
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
+
+func (h *AuthHandlers) OtpSend(c *ctx.Request[OtpSendRequest]) *ctx.Response[OtpSendResponse] {
+	logger.Info("Invoked: TwoFactorSend")
+
+	logger.Debug("Finding user by email")
+	user, err := h.queries.FindUserByEmail(c.Request.Context(), c.Body.Email)
+	if err != nil {
+		logger.Error("Error finding user by email: %v", err)
+		return internal.GenericError[OtpSendResponse]()
+	}
+
+	if !user.Verified {
+		logger.Error("User is not verified")
+		return internal.CustomError[OtpSendResponse]("please verify your email to enable 2FA")
+	}
+
+	if !user.TwoFactorEnabled {
+		logger.Error("User does not have 2FA enabled")
+		return internal.CustomError[OtpSendResponse]("User does not have 2FA enabled")
+	}
+
+	logger.Debug("Creating OTP code")
+	otpCode, err := generateOtp(6)
+	if err != nil {
+		logger.Error("Error generating OTP code: %v", err)
+		return internal.GenericError[OtpSendResponse]()
+	}
+
+	logger.Debug("Creating OTP code in database")
+	code, err := h.queries.CreateOtpCode(c.Request.Context(), database.CreateOtpCodeParams{
+		ID:        uuid.New().String(),
+		Code:      otpCode,
+		ExpiresAt: pgtype.Timestamptz{Time: time.Now().Add(3 * time.Minute), Valid: true},
+	})
+	if err != nil {
+		logger.Error("Error creating OTP code in database: %v", err)
+		return internal.GenericError[OtpSendResponse]()
+	}
+
+	err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Two-Factor Authentication", "two_factor_email_otp", map[string]any{
+		"OtpCode":       otpCode,
+		"ExpiryMinutes": 3,
+	})
+	if err != nil {
+		logger.Error("Error sending OTP code: %v", err)
+		return internal.GenericError[OtpSendResponse]()
+	}
+
+	return &ctx.Response[OtpSendResponse]{
+		Response: OtpSendResponse{
+			Message:   "We have sent an OTP to your email",
+			OtpCodeId: code.ID,
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
+
+func (h *AuthHandlers) OtpVerify(c *ctx.Request[OtpVerifyRequest]) *ctx.Response[OtpVerifyResponse] {
+	logger.Info("Invoked: TwoFactorVerify")
+
+	logger.Debug("Finding OTP code by id")
+	otpCode, err := h.queries.FindOtpCodeById(c.Request.Context(), c.Body.OtpCodeId)
+	if err != nil {
+		logger.Error("Error finding OTP code by id: %v", err)
+		return internal.GenericError[OtpVerifyResponse]()
+	}
+
+	if otpCode.ExpiresAt.Time.Before(time.Now()) {
+		logger.Error("OTP code has expired")
+		return internal.CustomError[OtpVerifyResponse]("OTP code has expired")
+	}
+
+	if otpCode.Code != c.Body.OtpCode {
+		logger.Error("Invalid OTP code")
+		return internal.CustomError[OtpVerifyResponse]("invalid OTP code")
+	}
+
+	return &ctx.Response[OtpVerifyResponse]{
+		Response: OtpVerifyResponse{
+			Message: "Successfully verified OTP code",
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,
