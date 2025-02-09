@@ -1,4 +1,29 @@
-# Thorfinn
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/b0277571-4ac5-4130-8cc5-4538b897c757" width="50%" alt="matcha">
+</div>
+
+<div align="center">
+  <h1>Thorfinn: Simple, Extensible Auth</h1>
+</div>
+
+<div align="center">
+   A complete credentials + email OTP authentication solution built in Go with JWT and Cookies.
+</div>
+
+<br>
+
+<div align="center">
+  <a href="https://thorfinn.abydyl.net" target="_blank" rel="noopener noreferrer">
+  <img
+    src="https://img.shields.io/badge/DOCS-thorfinn.abydyl.net-555555?style=for-the-badge&logo=read-the-docs&logoColor=white&labelColor=333333&color=777777"
+    alt="Docs"
+  />
+</a>
+</div>
+
+<br>
+
+# Overview
 
 **Thorfinn** is a simple, framework-agnostic authentication server built with the [Matcha framework](https://github.com/abyanmajid/matcha). It provides a complete credentials + email OTP authentication solution.
 
