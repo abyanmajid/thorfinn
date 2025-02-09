@@ -74,7 +74,8 @@ type SendPasswordResetResponse struct {
 }
 
 type ResetPasswordRequest struct {
-	Token string
+	Token       string `json:"token"`
+	NewPassword string `json:"new_password"`
 }
 
 type ResetPasswordResponse struct {

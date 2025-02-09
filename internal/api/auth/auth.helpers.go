@@ -1,6 +1,7 @@
 package auth_features
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"time"
@@ -40,6 +41,29 @@ func createVerificationLink[T any](opts VerificationLinkOpts[T]) (string, error)
 	verificationLink := fmt.Sprintf("%s/%s?token=%s", opts.Config.FrontendUrl, opts.Path, tokenUrlSafe)
 
 	return verificationLink, nil
+}
+
+func processVerificationToken(token string, config *internal.EnvConfig) (security.JwtClaims, error) {
+	if token == "" {
+		return nil, errors.New("token not found")
+	}
+
+	encryptedToken, err := security.DecodeBase64(token)
+	if err != nil {
+		return nil, errors.New("an error occurred while processing your request")
+	}
+
+	tokenByte, err := security.Decrypt([]byte(encryptedToken), []byte(config.EncryptionSecret))
+	if err != nil {
+		return nil, errors.New("an error occurred while processing your request")
+	}
+
+	verifiedToken, err := security.VerifyJWT(string(tokenByte), []byte(config.JwtSecret))
+	if err != nil {
+		return nil, errors.New("token is invalid or has expired")
+	}
+
+	return verifiedToken.JwtClaims, nil
 }
 
 func (h *AuthHandlers) setAuthCookies(c *ctx.Request[LoginRequest], accessToken string, refreshToken string) {

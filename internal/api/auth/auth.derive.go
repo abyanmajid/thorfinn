@@ -9,6 +9,7 @@ type DerivedAuthResources struct {
 	Logout                *openapi.Resource
 	SendEmailVerification *openapi.Resource
 	SendPasswordResetLink *openapi.Resource
+	ResetPassword         *openapi.Resource
 }
 
 func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
@@ -38,7 +39,12 @@ func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
 		return nil, err
 	}
 
-	sendPasswordResetLink, err := authResources.SendPasswordResetLinkResource()
+	sendPasswordResetLinkResource, err := authResources.SendPasswordResetLinkResource()
+	if err != nil {
+		return nil, err
+	}
+
+	resetPasswordResource, err := authResources.ResetPasswordResource()
 	if err != nil {
 		return nil, err
 	}
@@ -49,6 +55,7 @@ func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
 		Login:                 loginResource,
 		Logout:                logoutResource,
 		SendEmailVerification: sendEmailVerificationResource,
-		SendPasswordResetLink: sendPasswordResetLink,
+		SendPasswordResetLink: sendPasswordResetLinkResource,
+		ResetPassword:         resetPasswordResource,
 	}, nil
 }

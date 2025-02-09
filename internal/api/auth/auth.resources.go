@@ -197,3 +197,33 @@ func (r *AuthResources) SendPasswordResetLinkResource() (*openapi.Resource, erro
 
 	return &resource, nil
 }
+
+func (r *AuthResources) ResetPasswordResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(ResetPasswordRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(ResetPasswordResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Reset a user's password",
+		Description: "Reset a user's password",
+		Schema: openapi.Schema{
+			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "Password reset successful",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("ResetPassword", doc, r.handlers.ResetPassword)
+
+	return &resource, nil
+}

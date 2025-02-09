@@ -16,5 +16,11 @@ SET verified = $2
 WHERE id = $1
 RETURNING *;
 
+-- name: UpdateUserPassword :one
+UPDATE thorfinn_users
+SET password_hash = $2
+WHERE id = $1
+RETURNING *;
+
 -- name: DeleteUser :exec
 DELETE FROM thorfinn_users WHERE id = $1;

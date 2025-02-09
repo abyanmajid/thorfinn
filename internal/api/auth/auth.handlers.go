@@ -102,34 +102,15 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 func (h *AuthHandlers) VerifyEmail(c *ctx.Request[ConfirmEmailRequest]) *ctx.Response[ConfirmEmailResponse] {
 	logger.Info("Invoked: VerifyEmail")
 
-	if c.Body.Token == "" {
-		logger.Error("Token not found")
-		return CustomError[ConfirmEmailResponse]("token not found")
-	}
-
-	logger.Debug("Decoding token")
-	encryptedToken, err := security.DecodeBase64(c.Body.Token)
+	logger.Debug("Decoding, decrypting, and verifying token")
+	claims, err := processVerificationToken(c.Body.Token, h.config)
 	if err != nil {
-		logger.Error("Error decoding token: %v", err)
-		return GenericError[ConfirmEmailResponse]()
-	}
-
-	logger.Debug("Decrypting token")
-	tokenByte, err := security.Decrypt([]byte(encryptedToken), []byte(h.config.EncryptionSecret))
-	if err != nil {
-		logger.Error("Error decrypting token: %v", err)
-		return GenericError[ConfirmEmailResponse]()
-	}
-
-	logger.Debug("Verifying token")
-	verifiedToken, err := security.VerifyJWT(string(tokenByte), []byte(h.config.JwtSecret))
-	if err != nil {
-		logger.Error("Error verifying token: %v", err)
-		return CustomError[ConfirmEmailResponse]("token is invalid or has expired")
+		logger.Error("Error processing verification token: %v", err)
+		return CustomError[ConfirmEmailResponse](err.Error())
 	}
 
 	logger.Debug("Validating user id")
-	userIdInterface := verifiedToken.JwtClaims["user_id"]
+	userIdInterface := claims["user_id"]
 	userId, err := validateUserIdInterface(userIdInterface)
 	if err != nil {
 		logger.Error("Error validating user id: %v", err)
@@ -304,6 +285,49 @@ func (h *AuthHandlers) SendPasswordResetLink(c *ctx.Request[SendPasswordResetReq
 	return &ctx.Response[SendPasswordResetResponse]{
 		Response: SendPasswordResetResponse{
 			Message: "If this user exists, you will receive a password reset email shortly.",
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
+
+func (h *AuthHandlers) ResetPassword(c *ctx.Request[ResetPasswordRequest]) *ctx.Response[ResetPasswordResponse] {
+	logger.Info("Invoked: ResetPassword")
+
+	logger.Debug("Decoding, decrypting, and verifying token")
+	claims, err := processVerificationToken(c.Body.Token, h.config)
+	if err != nil {
+		logger.Error("Error processing verification token: %v", err)
+		return CustomError[ResetPasswordResponse](err.Error())
+	}
+
+	logger.Debug("Validating user id")
+	userIdInterface := claims["user_id"]
+	userId, err := validateUserIdInterface(userIdInterface)
+	if err != nil {
+		logger.Error("Error validating user id: %v", err)
+		return CustomError[ResetPasswordResponse](err.Error())
+	}
+
+	newPasswordHash, err := security.Hash([]byte(c.Body.NewPassword))
+	if err != nil {
+		logger.Error("Error hashing new password: %v", err)
+		return GenericError[ResetPasswordResponse]()
+	}
+
+	logger.Debug("Updating user password")
+	_, err = h.queries.UpdateUserPassword(c.Request.Context(), database.UpdateUserPasswordParams{
+		ID:           userId,
+		PasswordHash: newPasswordHash.Hash,
+	})
+	if err != nil {
+		logger.Error("Error updating user password: %v", err)
+		return GenericError[ResetPasswordResponse]()
+	}
+
+	return &ctx.Response[ResetPasswordResponse]{
+		Response: ResetPasswordResponse{
+			Message: "Password has been reset",
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,

@@ -11,12 +11,13 @@ import (
 )
 
 const (
-	AuthRegisterPath          = "/auth/register"
-	AuthVerifyEmailPath       = "/auth/verify-email"
-	AuthLoginPath             = "/auth/login"
-	AuthLogoutPath            = "/auth/logout"
-	AuthSendEmailVerification = "/auth/send-email-verification"
-	AuthSendPasswordResetLink = "/auth/send-password-reset-link"
+	AuthRegisterPath              = "/auth/register"
+	AuthVerifyEmailPath           = "/auth/verify-email"
+	AuthLoginPath                 = "/auth/login"
+	AuthLogoutPath                = "/auth/logout"
+	AuthSendEmailVerificationPath = "/auth/send-email-verification"
+	AuthSendPasswordResetLinkPath = "/auth/send-password-reset-link"
+	AuthResetPasswordPath         = "/auth/reset-password"
 )
 
 func main() {
@@ -56,10 +57,9 @@ func main() {
 	app.Put(AuthVerifyEmailPath, resources.AuthResources.VerifyEmail)
 	app.Post(AuthLoginPath, resources.AuthResources.Login)
 	app.Post(AuthLogoutPath, resources.AuthResources.Logout)
-	app.Post(AuthSendEmailVerification, resources.AuthResources.SendEmailVerification)
-	app.Post(AuthSendPasswordResetLink, resources.AuthResources.SendPasswordResetLink)
-	// send password reset email
-	// reset password
+	app.Post(AuthSendEmailVerificationPath, resources.AuthResources.SendEmailVerification)
+	app.Post(AuthSendPasswordResetLinkPath, resources.AuthResources.SendPasswordResetLink)
+	app.Put(AuthResetPasswordPath, resources.AuthResources.ResetPassword)
 	// otp send
 	// otp verify
 	// get self
