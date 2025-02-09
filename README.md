@@ -8,7 +8,7 @@ You can use **Thorfinn** as a standalone authentication microservice, or as a st
 
 **Thorfinn** was designed to support:
 
-- Credentials (username + password)
+- Credentials (email + password), including registration, login, logout, email verification, and password reset
 - Email OTP
 - Postgres User Data
 - Secure, HTTP-only cookies
