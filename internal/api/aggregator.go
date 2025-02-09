@@ -15,8 +15,8 @@ type Handlers struct {
 	authHandlers *auth_features.AuthHandlers
 }
 
-func aggregateHandlers(config *internal.EnvConfig, queries *database.Queries, mailer *email.Client) *Handlers {
-	authHandlers := auth_features.NewHandlers(config, queries, mailer)
+func aggregateHandlers(isDev bool, config *internal.EnvConfig, queries *database.Queries, mailer *email.Client) *Handlers {
+	authHandlers := auth_features.NewHandlers(isDev, config, queries, mailer)
 
 	return &Handlers{
 		authHandlers: authHandlers,

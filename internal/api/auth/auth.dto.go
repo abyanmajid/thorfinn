@@ -45,5 +45,13 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	AccessToken string `json:"access_token"`
+	Message       string `json:"message"`
+	AccessToken   string `json:"access_token"`
+	RefreshTokens string `json:"refresh_token"`
+}
+
+type LogoutRequest struct{}
+
+type LogoutResponse struct {
+	Message string `json:"message"`
 }

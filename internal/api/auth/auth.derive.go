@@ -6,6 +6,7 @@ type DerivedAuthResources struct {
 	Register    *openapi.Resource
 	VerifyEmail *openapi.Resource
 	Login       *openapi.Resource
+	Logout      *openapi.Resource
 }
 
 func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
@@ -25,9 +26,15 @@ func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
 		return nil, err
 	}
 
+	logoutResource, err := authResources.LogoutResource()
+	if err != nil {
+		return nil, err
+	}
+
 	return &DerivedAuthResources{
 		Register:    registerResource,
 		VerifyEmail: confirmEmailResource,
 		Login:       loginResource,
+		Logout:      logoutResource,
 	}, nil
 }

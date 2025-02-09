@@ -90,8 +90,8 @@ func (r *AuthResources) LoginResource() (*openapi.Resource, error) {
 	}
 
 	doc := openapi.ResourceDoc{
-		Summary:     "Login",
-		Description: "Login",
+		Summary:     "Log a user in",
+		Description: "Check if user exists, compare password, and issue an access token",
 		Schema: openapi.Schema{
 			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
 			Responses: map[int]openapi.Response{
@@ -104,6 +104,36 @@ func (r *AuthResources) LoginResource() (*openapi.Resource, error) {
 	}
 
 	resource := openapi.NewResource("Login", doc, r.handlers.Login)
+
+	return &resource, nil
+}
+
+func (r *AuthResources) LogoutResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(LogoutRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(LogoutResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Logout a user",
+		Description: "Logout a user",
+		Schema: openapi.Schema{
+			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "Logout successful",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("Logout", doc, r.handlers.Logout)
 
 	return &resource, nil
 }

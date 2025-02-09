@@ -18,13 +18,15 @@ import (
 )
 
 type AuthHandlers struct {
+	isDev   bool
 	config  *internal.EnvConfig
 	queries *database.Queries
 	mailer  *email.Client
 }
 
-func NewHandlers(config *internal.EnvConfig, queries *database.Queries, mailer *email.Client) *AuthHandlers {
+func NewHandlers(isDev bool, config *internal.EnvConfig, queries *database.Queries, mailer *email.Client) *AuthHandlers {
 	return &AuthHandlers{
+		isDev:   isDev,
 		config:  config,
 		queries: queries,
 		mailer:  mailer,
@@ -173,9 +175,60 @@ func (h *AuthHandlers) VerifyEmail(c *ctx.Request[ConfirmEmailRequest]) *ctx.Res
 func (h *AuthHandlers) Login(c *ctx.Request[LoginRequest]) *ctx.Response[LoginResponse] {
 	logger.Info("Invoked: Login")
 
+	logger.Debug("Finding user by email")
+	user, err := h.queries.FindUserByEmail(c.Request.Context(), c.Body.Email)
+	if err != nil {
+		logger.Error("Error finding user by email: %v", err)
+		return GenericError[LoginResponse]()
+	}
+
+	if !user.Verified {
+		logger.Error("User is not verified")
+		return CustomError[LoginResponse]("please verify your email to login")
+	}
+
+	logger.Debug("Comparing password with hash")
+	err = security.VerifyHash([]byte(user.PasswordHash), []byte(c.Body.Password))
+	if err != nil {
+		logger.Error("Error verifying password: %v", err)
+		return CustomError[LoginResponse]("invalid credentials")
+	}
+
+	accessToken, err := h.createAccessToken(&user)
+	if err != nil {
+		logger.Error("Error creating access token: %v", err)
+		return GenericError[LoginResponse]()
+	}
+
+	refreshToken, err := h.createRefreshToken(&user)
+	if err != nil {
+		logger.Error("Error creating refresh token: %v", err)
+		return GenericError[LoginResponse]()
+	}
+
+	logger.Debug("Setting auth cookies")
+	h.setAuthCookies(c, accessToken, refreshToken)
+
 	return &ctx.Response[LoginResponse]{
 		Response: LoginResponse{
-			AccessToken: "access_token",
+			Message:       "We have successfully logged you in",
+			AccessToken:   accessToken,
+			RefreshTokens: refreshToken,
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
+
+func (h *AuthHandlers) Logout(c *ctx.Request[LogoutRequest]) *ctx.Response[LogoutResponse] {
+	logger.Info("Invoked: Logout")
+
+	logger.Debug("Clearing auth cookies")
+	h.clearAuthCookies(c)
+
+	return &ctx.Response[LogoutResponse]{
+		Response: LogoutResponse{
+			Message: "We have successfully logged you out",
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,

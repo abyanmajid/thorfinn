@@ -12,13 +12,14 @@ type ApiResources struct {
 }
 
 type Utils struct {
+	IsDev   *bool
 	Config  *internal.EnvConfig
 	Queries *database.Queries
 	Mailer  *email.Client
 }
 
 func CreateApiResources(utils *Utils) (*ApiResources, error) {
-	handlers := aggregateHandlers(utils.Config, utils.Queries, utils.Mailer)
+	handlers := aggregateHandlers(*utils.IsDev, utils.Config, utils.Queries, utils.Mailer)
 	resources, err := aggregateResources(handlers)
 	if err != nil {
 		return nil, err

@@ -8,6 +8,7 @@ import (
 )
 
 type EnvConfig struct {
+	RootDomain       string `name:"ROOT_DOMAIN" required:"true"`
 	Origin           string `name:"ORIGIN" required:"true"`
 	FrontendUrl      string `name:"FRONTEND_URL" required:"true"`
 	DatabaseUrl      string `name:"DATABASE_URL" required:"true"`
@@ -21,7 +22,7 @@ type EnvConfig struct {
 	EncryptionIv     string `name:"ENCRYPTION_IV" required:"true"`
 }
 
-func ConfigureEnv() *EnvConfig {
+func ConfigureEnv() (bool, *EnvConfig) {
 	dev := flag.Bool("dev", false, "Set the debug level (e.g., true or false)")
 
 	flag.Parse()
@@ -37,5 +38,11 @@ func ConfigureEnv() *EnvConfig {
 		logger.Fatal("Error loading configuration: %s", err)
 	}
 
-	return &config
+	if *dev {
+		logger.Info("Running in development mode")
+	} else {
+		logger.Info("Running in production mode")
+	}
+
+	return *dev, &config
 }

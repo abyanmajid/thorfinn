@@ -14,10 +14,13 @@ const (
 	AuthRegisterPath    = "/auth/register"
 	AuthVerifyEmailPath = "/auth/verify-email"
 	AuthLoginPath       = "/auth/login"
+	AuthLogoutPath      = "/auth/logout"
 )
 
 func main() {
-	config := internal.ConfigureEnv()
+	app := matcha.New()
+
+	isDev, config := internal.ConfigureEnv()
 
 	queries, err := internal.CreateQueryClient(config.DatabaseUrl)
 	if err != nil {
@@ -32,6 +35,7 @@ func main() {
 	}, "templates")
 
 	resources, err := api.CreateApiResources(&api.Utils{
+		IsDev:   &isDev,
 		Config:  config,
 		Queries: queries,
 		Mailer:  mailer,
@@ -39,8 +43,6 @@ func main() {
 	if err != nil {
 		logger.Fatal("Failed to create resources: %v", err)
 	}
-
-	app := matcha.New()
 
 	app.Documentation("/docs", openapi.Meta{
 		OpenAPI:        "3.0.0",
@@ -51,7 +53,7 @@ func main() {
 	app.Post(AuthRegisterPath, resources.AuthResources.Register)
 	app.Put(AuthVerifyEmailPath, resources.AuthResources.VerifyEmail)
 	app.Post(AuthLoginPath, resources.AuthResources.Login)
-	// logout
+	app.Post(AuthLogoutPath, resources.AuthResources.Logout)
 	// password reset
 	// resend verification email
 	// otp activate
