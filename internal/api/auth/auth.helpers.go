@@ -1,6 +1,7 @@
 package auth_features
 
 import (
+	"context"
 	"crypto/rand"
 	"errors"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"github.com/abyanmajid/matcha/security"
 	"github.com/abyanmajid/thorfinn/internal"
 	"github.com/abyanmajid/thorfinn/internal/database"
+	"github.com/google/uuid"
 )
 
 type VerificationLinkOpts[T any] struct {
@@ -19,6 +21,22 @@ type VerificationLinkOpts[T any] struct {
 	Config  *internal.EnvConfig
 	UserId  string
 	Path    string
+}
+
+func (h *AuthHandlers) isTokenBlacklisted(token string) bool {
+	_, err := h.queries.GetBlacklistedToken(context.Background(), token)
+	return err == nil
+}
+
+func (h *AuthHandlers) blacklistToken(token string) error {
+	_, err := h.queries.CreateBlacklistedToken(context.Background(), database.CreateBlacklistedTokenParams{
+		ID:    uuid.New().String(),
+		Token: token,
+	})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func createVerificationLink[T any](opts VerificationLinkOpts[T]) (string, error) {

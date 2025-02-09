@@ -104,6 +104,17 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 func (h *AuthHandlers) VerifyEmail(c *ctx.Request[ConfirmEmailRequest]) *ctx.Response[ConfirmEmailResponse] {
 	logger.Info("Invoked: VerifyEmail")
 
+	if h.isTokenBlacklisted(c.Body.Token) {
+		logger.Error("Token is blacklisted")
+		return internal.CustomError[ConfirmEmailResponse]("token is blacklisted")
+	}
+
+	err := h.blacklistToken(c.Body.Token)
+	if err != nil {
+		logger.Error("Error blacklisting token: %v", err)
+		return internal.GenericError[ConfirmEmailResponse]()
+	}
+
 	logger.Debug("Decoding, decrypting, and verifying token")
 	claims, err := processVerificationToken(c.Body.Token, h.config)
 	if err != nil {
@@ -294,6 +305,17 @@ func (h *AuthHandlers) SendPasswordResetLink(c *ctx.Request[SendPasswordResetReq
 
 func (h *AuthHandlers) ResetPassword(c *ctx.Request[ResetPasswordRequest]) *ctx.Response[ResetPasswordResponse] {
 	logger.Info("Invoked: ResetPassword")
+
+	if h.isTokenBlacklisted(c.Body.Token) {
+		logger.Error("Token is blacklisted")
+		return internal.CustomError[ResetPasswordResponse]("token is blacklisted")
+	}
+
+	err := h.blacklistToken(c.Body.Token)
+	if err != nil {
+		logger.Error("Error blacklisting token: %v", err)
+		return internal.GenericError[ResetPasswordResponse]()
+	}
 
 	logger.Debug("Decoding, decrypting, and verifying token")
 	claims, err := processVerificationToken(c.Body.Token, h.config)
