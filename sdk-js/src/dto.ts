@@ -1,80 +1,80 @@
 export type RegisterRequest = {
   email: string;
   password: string;
-  confirmPassword: string;
-}
+  confirm_password: string;
+};
 
 export type RegisterResponse = {
   message: string;
-}
+};
 
 export type ConfirmEmailRequest = {
   token: string;
-}
+};
 
 export type ConfirmEmailResponse = {
   message: string;
-}
+};
 
 export type LoginRequest = {
   email: string;
   password: string;
-}
+};
 
 export type LoginResponse = {
   message: string;
   accessToken: string;
   refreshToken: string;
-}
+};
 
-export type LogoutRequest = {}
+export type LogoutRequest = {};
 
 export type LogoutResponse = {
   message: string;
-}
+};
 
 export type SendVerificationEmailRequest = {
   email: string;
-}
+};
 
 export type SendVerificationEmailResponse = {
   message: string;
-}
+};
 
 export type SendPasswordResetRequest = {
   email: string;
-}
+};
 
 export type SendPasswordResetResponse = {
   message: string;
-}
+};
 
 export type ResetPasswordRequest = {
   token: string;
   newPassword: string;
-}
+};
 
 export type ResetPasswordResponse = {
   message: string;
-}
+};
 
 export type OtpSendRequest = {
   email: string;
-}
+};
 
 export type OtpSendResponse = {
   message: string;
   otpCodeId: string;
-}
+};
 
 export type OtpVerifyRequest = {
   otpCodeId: string;
   otpCode: string;
-}
+};
 
 export type OtpVerifyResponse = {
   message: string;
-}
+};
 
 export type ListUsersRow = {
   id: string;

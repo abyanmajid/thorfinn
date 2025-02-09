@@ -67,7 +67,7 @@ class ThorfinnBaseClient {
   }
 }
 
-export class ThorfinnAuthClient extends ThorfinnBaseClient {
+class ThorfinnAuthClient extends ThorfinnBaseClient {
   async register(data: Dto.RegisterRequest): Promise<Dto.RegisterResponse> {
     return this.makeRequest<Dto.RegisterResponse>(
       thorfinnApiPaths.auth.register,
@@ -149,7 +149,7 @@ export class ThorfinnAuthClient extends ThorfinnBaseClient {
   }
 }
 
-export class ThorfinnUserClient extends ThorfinnBaseClient {
+class ThorfinnUserClient extends ThorfinnBaseClient {
   async getAllUsers(): Promise<Dto.GetAllUsersResponse> {
     return this.makeRequest<Dto.GetAllUsersResponse>(
       thorfinnApiPaths.user.getAll,
@@ -181,4 +181,26 @@ export class ThorfinnUserClient extends ThorfinnBaseClient {
       "DELETE"
     );
   }
+}
+
+type Session = {
+  user: Dto.ListUsersRow;
+};
+
+// async function authorize(): Promise<Session> {
+
+// }
+
+type ThorfinnFuncs = {
+  authInvoker: ThorfinnAuthClient;
+  userInvoker: ThorfinnUserClient;
+  authorize: () => Promise<void>;
+};
+
+export function Thorfinn(baseUrl: string): ThorfinnFuncs {
+  return {
+    authInvoker: new ThorfinnAuthClient(baseUrl),
+    userInvoker: new ThorfinnUserClient(baseUrl),
+    authorize: async () => {},
+  };
 }
