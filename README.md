@@ -46,7 +46,8 @@ The server requires the following environment variables:
 - `SMTP_PASSWORD`: The SMTP password.
 - `EMAIL_FROM`: The email address of the sender.
 - `JWT_SECRET`: The JWT secret key.
-- `ENCRYPTION_SECRET`: The encryption secret key.
+- `ENCRYPTION_SECRET`: The encryption secret key. This should be 32 characters long.
+- `ENCRYPTION_IV`: The encryption initialization vector. This should be 6 characters long.
 
 It's advised to serve the production server using Docker. To build the docker image, run:
 
