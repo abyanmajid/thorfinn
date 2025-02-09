@@ -29,7 +29,7 @@ func NewHandlers(isDev bool, config *internal.EnvConfig, queries *database.Queri
 func (h *UsersHandlers) GetAllUsers(c *ctx.Request[GetAllUsersRequest]) *ctx.Response[GetAllUsersResponse] {
 	logger.Info("Invoked: GetAllUsers")
 
-	logger.Debug("Getting all users")
+	logger.Debug("Fetching all users")
 	users, err := h.queries.ListUsers(c.Request.Context())
 	if err != nil {
 		logger.Error("Error getting all users: %v", err)
@@ -40,6 +40,28 @@ func (h *UsersHandlers) GetAllUsers(c *ctx.Request[GetAllUsersRequest]) *ctx.Res
 		Response: GetAllUsersResponse{
 			Message: "Successfully fetched all users",
 			Users:   users,
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
+
+func (h *UsersHandlers) GetUser(c *ctx.Request[GetUserRequest]) *ctx.Response[GetUserResponse] {
+	logger.Info("Invoked: GetUser")
+
+	userId := c.GetPathParam("id")
+
+	logger.Debug("Fetching user by id")
+	user, err := h.queries.FindUserById(c.Request.Context(), userId)
+	if err != nil {
+		logger.Error("Error getting user: %v", err)
+		return internal.GenericError[GetUserResponse]()
+	}
+
+	return &ctx.Response[GetUserResponse]{
+		Response: GetUserResponse{
+			Message: "Successfully fetched user",
+			User:    user,
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,

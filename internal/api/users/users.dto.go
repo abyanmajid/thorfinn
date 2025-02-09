@@ -11,12 +11,11 @@ type GetAllUsersResponse struct {
 	Users   []database.ListUsersRow `json:"users"`
 }
 
-type GetUserRequest struct {
-	ID string `json:"id"`
-}
+type GetUserRequest struct{}
 
 type GetUserResponse struct {
-	Message string `json:"message"`
+	Message string                `json:"message"`
+	User    database.ThorfinnUser `json:"user"`
 }
 
 type UpdateUserRequest struct {

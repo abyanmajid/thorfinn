@@ -4,6 +4,7 @@ import "github.com/abyanmajid/matcha/openapi"
 
 type DerivedUsersResources struct {
 	GetAllUsers *openapi.Resource
+	GetUser     *openapi.Resource
 }
 
 func Derive(handlers *UsersHandlers) (*DerivedUsersResources, error) {
@@ -13,7 +14,13 @@ func Derive(handlers *UsersHandlers) (*DerivedUsersResources, error) {
 		return nil, err
 	}
 
+	getUserResource, err := userResources.GetUserResource()
+	if err != nil {
+		return nil, err
+	}
+
 	return &DerivedUsersResources{
 		GetAllUsers: getAllUsersResource,
+		GetUser:     getUserResource,
 	}, nil
 }

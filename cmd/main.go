@@ -20,6 +20,7 @@ const (
 	AuthResetPasswordPath         = "/auth/reset-password"
 
 	UsersGetAllPath = "/users"
+	UsersGetPath    = "/users/{id}"
 )
 
 func main() {
@@ -68,7 +69,7 @@ func main() {
 
 	// User management resources
 	app.Get(UsersGetAllPath, resources.UsersResources.GetAllUsers)
-	// get user
+	app.Get(UsersGetPath, resources.UsersResources.GetUser)
 	// update user
 	// delete user
 
