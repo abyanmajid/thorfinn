@@ -62,9 +62,6 @@ func main() {
 	app.Put(AuthResetPasswordPath, resources.AuthResources.ResetPassword)
 	// otp send
 	// otp verify
-	// get self
-	// update self
-	// delete self
 	// get all users
 	// get user
 	// update user

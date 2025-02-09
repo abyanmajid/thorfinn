@@ -4,6 +4,17 @@
 
 You can use **Thorfinn** as a standalone authentication microservice, or as a starter for your RESTful backend.
 
+## Features
+
+**Thorfinn** was designed to support:
+
+- Credentials (username + password)
+- Email OTP
+- Postgres User Data
+- Secure, HTTP-only cookies
+- JSON Web Tokens
+- Token blacklisting
+
 ## Development
 
 Copy the `.env.example` file to `.env`:
