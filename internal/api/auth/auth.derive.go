@@ -3,10 +3,11 @@ package auth_features
 import "github.com/abyanmajid/matcha/openapi"
 
 type DerivedAuthResources struct {
-	Register    *openapi.Resource
-	VerifyEmail *openapi.Resource
-	Login       *openapi.Resource
-	Logout      *openapi.Resource
+	Register              *openapi.Resource
+	VerifyEmail           *openapi.Resource
+	Login                 *openapi.Resource
+	Logout                *openapi.Resource
+	SendEmailVerification *openapi.Resource
 }
 
 func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
@@ -31,10 +32,16 @@ func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
 		return nil, err
 	}
 
+	sendEmailVerificationResource, err := authResources.SendEmailVerificationResource()
+	if err != nil {
+		return nil, err
+	}
+
 	return &DerivedAuthResources{
-		Register:    registerResource,
-		VerifyEmail: confirmEmailResource,
-		Login:       loginResource,
-		Logout:      logoutResource,
+		Register:              registerResource,
+		VerifyEmail:           confirmEmailResource,
+		Login:                 loginResource,
+		Logout:                logoutResource,
+		SendEmailVerification: sendEmailVerificationResource,
 	}, nil
 }

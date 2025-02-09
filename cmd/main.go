@@ -11,10 +11,11 @@ import (
 )
 
 const (
-	AuthRegisterPath    = "/auth/register"
-	AuthVerifyEmailPath = "/auth/verify-email"
-	AuthLoginPath       = "/auth/login"
-	AuthLogoutPath      = "/auth/logout"
+	AuthRegisterPath          = "/auth/register"
+	AuthVerifyEmailPath       = "/auth/verify-email"
+	AuthLoginPath             = "/auth/login"
+	AuthLogoutPath            = "/auth/logout"
+	AuthSendEmailVerification = "/auth/send-email-verification"
 )
 
 func main() {
@@ -54,17 +55,19 @@ func main() {
 	app.Put(AuthVerifyEmailPath, resources.AuthResources.VerifyEmail)
 	app.Post(AuthLoginPath, resources.AuthResources.Login)
 	app.Post(AuthLogoutPath, resources.AuthResources.Logout)
+	app.Post(AuthSendEmailVerification, resources.AuthResources.SendEmailVerification)
+	// send verification email
+	// send password reset email
 	// password reset
-	// resend verification email
-	// otp activate
 	// otp send
 	// otp verify
 	// get self
 	// update self
 	// delete self
-	// get specific user
-	// update specific user
-	// delete specific user
+	// get all users
+	// get user
+	// update user
+	// delete user
 
 	app.Reference("/reference", &reference.Options{
 		Source: "/docs",

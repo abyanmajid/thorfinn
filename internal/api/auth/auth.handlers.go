@@ -3,9 +3,7 @@ package auth_features
 import (
 	"database/sql"
 	"errors"
-	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/google/uuid"
 
@@ -73,30 +71,19 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 			return GenericError[RegisterResponse]()
 		}
 
-		logger.Debug("Creating token")
-		token := security.NewJWT(security.JwtClaims{
-			"user_id": user.ID,
-			"iat":     time.Now().Unix(),
-			"exp":     time.Now().Add(time.Minute * 10).Unix(),
+		logger.Debug("Creating verification link")
+		verificationLink, err := createVerificationLink(VerificationLinkOpts[RegisterRequest]{
+			Request: c,
+			Config:  h.config,
+			UserId:  user.ID,
+			Path:    "auth/verify-email",
 		})
 
-		signedToken, err := token.Sign([]byte(h.config.JwtSecret))
 		if err != nil {
-			logger.Error("Error signing token: %v", err)
+			logger.Error("Error creating verification link: %v", err)
 			return GenericError[RegisterResponse]()
 		}
 
-		logger.Debug("Encrypting signed token")
-		encryptedSignedToken, err := security.Encrypt([]byte(signedToken), []byte(h.config.EncryptionSecret), []byte(h.config.EncryptionIv))
-		if err != nil {
-			logger.Error("Error encrypting signed token: %v, key: %s", err, h.config.EncryptionSecret)
-			return GenericError[RegisterResponse]()
-		}
-
-		tokenUrlSafe := security.EncodeBase64(encryptedSignedToken)
-
-		logger.Debug("Sending email verification email")
-		verificationLink := fmt.Sprintf("%s/auth/verify-email?token=%s", h.config.FrontendUrl, tokenUrlSafe)
 		err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Email Verification", "email_verification", map[string]any{
 			"VerificationLink": verificationLink,
 		})
@@ -229,6 +216,52 @@ func (h *AuthHandlers) Logout(c *ctx.Request[LogoutRequest]) *ctx.Response[Logou
 	return &ctx.Response[LogoutResponse]{
 		Response: LogoutResponse{
 			Message: "We have successfully logged you out",
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
+
+func (h *AuthHandlers) SendVerificationEmail(c *ctx.Request[SendVerificationEmailRequest]) *ctx.Response[SendVerificationEmailResponse] {
+	logger.Info("Invoked: SendVerificationEmail")
+
+	logger.Debug("Finding user by email")
+	user, err := h.queries.FindUserByEmail(c.Request.Context(), c.Body.Email)
+	if err != nil {
+		logger.Error("Error finding user by email: %v", err)
+		return GenericError[SendVerificationEmailResponse]()
+	}
+
+	if user.Verified {
+		logger.Error("User is already verified")
+		return CustomError[SendVerificationEmailResponse]("user is already verified")
+	}
+
+	logger.Debug("Creating verification link")
+	verificationLink, err := createVerificationLink(VerificationLinkOpts[SendVerificationEmailRequest]{
+		Request: c,
+		Config:  h.config,
+		UserId:  user.ID,
+		Path:    "auth/verify-email",
+	})
+
+	if err != nil {
+		logger.Error("Error creating verification link: %v", err)
+		return GenericError[SendVerificationEmailResponse]()
+	}
+
+	err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Email Verification", "email_verification", map[string]any{
+		"VerificationLink": verificationLink,
+	})
+
+	if err != nil {
+		logger.Error("Error sending email verification email: %v", err)
+		return GenericError[SendVerificationEmailResponse]()
+	}
+
+	return &ctx.Response[SendVerificationEmailResponse]{
+		Response: SendVerificationEmailResponse{
+			Message: "Email verification email sent",
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,

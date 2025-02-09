@@ -7,8 +7,40 @@ import (
 
 	"github.com/abyanmajid/matcha/ctx"
 	"github.com/abyanmajid/matcha/security"
+	"github.com/abyanmajid/thorfinn/internal"
 	"github.com/abyanmajid/thorfinn/internal/database"
 )
+
+type VerificationLinkOpts[T any] struct {
+	Request *ctx.Request[T]
+	Config  *internal.EnvConfig
+	UserId  string
+	Path    string
+}
+
+func createVerificationLink[T any](opts VerificationLinkOpts[T]) (string, error) {
+	token := security.NewJWT(security.JwtClaims{
+		"user_id": opts.UserId,
+		"iat":     time.Now().Unix(),
+		"exp":     time.Now().Add(time.Minute * 10).Unix(),
+	})
+
+	signedToken, err := token.Sign([]byte(opts.Config.JwtSecret))
+	if err != nil {
+		return "", err
+	}
+
+	encryptedSignedToken, err := security.Encrypt([]byte(signedToken), []byte(opts.Config.EncryptionSecret), []byte(opts.Config.EncryptionIv))
+	if err != nil {
+		return "", err
+	}
+
+	tokenUrlSafe := security.EncodeBase64(encryptedSignedToken)
+
+	verificationLink := fmt.Sprintf("%s/%s?token=%s", opts.Config.FrontendUrl, opts.Path, tokenUrlSafe)
+
+	return verificationLink, nil
+}
 
 func (h *AuthHandlers) setAuthCookies(c *ctx.Request[LoginRequest], accessToken string, refreshToken string) {
 	c.Cookies.SetCookie("access_token", accessToken, &ctx.CookieOptions{
