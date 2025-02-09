@@ -37,6 +37,7 @@ You should be able to see the server's OpenAPI specification at `/docs`, and the
 The server requires the following environment variables:
 
 - `ORIGIN`: The URL of the server.
+- `ROOT_DOMAIN`: The root domain. Ideally, your frontend and backend should share the same domain (e.g., `app.com`, and `api.app.com`)
 - `FRONTEND_URL`: The URL of the frontend.
 - `DATABASE_URL`: The database URL.
 - `SMTP_HOST`: The SMTP host.
