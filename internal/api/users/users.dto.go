@@ -29,9 +29,7 @@ type UpdateUserResponse struct {
 	Message string `json:"message"`
 }
 
-type DeleteUserRequest struct {
-	ID string `json:"id"`
-}
+type DeleteUserRequest struct{}
 
 type DeleteUserResponse struct {
 	Message string `json:"message"`

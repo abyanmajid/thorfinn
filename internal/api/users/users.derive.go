@@ -6,6 +6,7 @@ type DerivedUsersResources struct {
 	GetAllUsers *openapi.Resource
 	GetUser     *openapi.Resource
 	UpdateUser  *openapi.Resource
+	DeleteUser  *openapi.Resource
 }
 
 func Derive(handlers *UsersHandlers) (*DerivedUsersResources, error) {
@@ -25,9 +26,15 @@ func Derive(handlers *UsersHandlers) (*DerivedUsersResources, error) {
 		return nil, err
 	}
 
+	deleteUserResource, err := userResources.DeleteUserResource()
+	if err != nil {
+		return nil, err
+	}
+
 	return &DerivedUsersResources{
 		GetAllUsers: getAllUsersResource,
 		GetUser:     getUserResource,
 		UpdateUser:  updateUserResource,
+		DeleteUser:  deleteUserResource,
 	}, nil
 }

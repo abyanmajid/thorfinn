@@ -22,6 +22,7 @@ const (
 	UsersGetAllPath = "/users"
 	UsersGetPath    = "/users/{id}"
 	UsersUpdatePath = "/users/{id}"
+	UsersDeletePath = "/users/{id}"
 )
 
 func main() {
@@ -72,7 +73,7 @@ func main() {
 	app.Get(UsersGetAllPath, resources.UsersResources.GetAllUsers)
 	app.Get(UsersGetPath, resources.UsersResources.GetUser)
 	app.Put(UsersUpdatePath, resources.UsersResources.UpdateUser)
-	// delete user
+	app.Delete(UsersDeletePath, resources.UsersResources.DeleteUser)
 
 	app.Reference("/reference", &reference.Options{
 		Source: "/docs",

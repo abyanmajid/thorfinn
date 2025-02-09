@@ -111,3 +111,35 @@ func (r *UsersResources) UpdateUserResource() (*openapi.Resource, error) {
 
 	return &resource, nil
 }
+
+func (r *UsersResources) DeleteUserResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(DeleteUserRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(DeleteUserResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Delete user",
+		Description: "Delete user",
+		Schema: openapi.Schema{
+			RequestBody: openapi.RequestBody{
+				Content: openapi.Json(requestSchema),
+			},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "Successfully deleted user",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("DeleteUser", doc, r.handlers.DeleteUser)
+
+	return &resource, nil
+}

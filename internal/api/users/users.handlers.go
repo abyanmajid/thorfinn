@@ -121,3 +121,23 @@ func (h *UsersHandlers) UpdateUser(c *ctx.Request[UpdateUserRequest]) *ctx.Respo
 		Error:      nil,
 	}
 }
+
+func (h *UsersHandlers) DeleteUser(c *ctx.Request[DeleteUserRequest]) *ctx.Response[DeleteUserResponse] {
+	logger.Info("Invoked: DeleteUser")
+
+	userId := c.GetPathParam("id")
+
+	logger.Debug("Deleting user")
+	err := h.queries.DeleteUser(c.Request.Context(), userId)
+	if err != nil {
+		logger.Error("Error deleting user: %v", err)
+	}
+
+	return &ctx.Response[DeleteUserResponse]{
+		Response: DeleteUserResponse{
+			Message: "Successfully deleted user",
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
