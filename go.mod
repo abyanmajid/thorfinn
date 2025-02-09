@@ -3,7 +3,7 @@ module github.com/abyanmajid/thorfinn
 go 1.22.4
 
 require (
-	github.com/abyanmajid/matcha v1.1.5
+	github.com/abyanmajid/matcha v1.1.6
 	github.com/abyanmajid/v v0.6.0
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.2

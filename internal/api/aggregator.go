@@ -4,22 +4,24 @@ import (
 	"github.com/abyanmajid/matcha/email"
 	"github.com/abyanmajid/thorfinn/internal"
 	auth_features "github.com/abyanmajid/thorfinn/internal/api/auth"
+	users_features "github.com/abyanmajid/thorfinn/internal/api/users"
 	"github.com/abyanmajid/thorfinn/internal/database"
 )
 
 type Resources struct {
-	authResources *auth_features.DerivedAuthResources
+	authResources  *auth_features.DerivedAuthResources
+	usersResources *users_features.DerivedUsersResources
 }
 
 type Handlers struct {
-	authHandlers *auth_features.AuthHandlers
+	authHandlers  *auth_features.AuthHandlers
+	usersHandlers *users_features.UsersHandlers
 }
 
 func aggregateHandlers(isDev bool, config *internal.EnvConfig, queries *database.Queries, mailer *email.Client) *Handlers {
-	authHandlers := auth_features.NewHandlers(isDev, config, queries, mailer)
-
 	return &Handlers{
-		authHandlers: authHandlers,
+		authHandlers:  auth_features.NewHandlers(isDev, config, queries, mailer),
+		usersHandlers: users_features.NewHandlers(isDev, config, queries, mailer),
 	}
 }
 
@@ -29,7 +31,13 @@ func aggregateResources(handlers *Handlers) (*Resources, error) {
 		return nil, err
 	}
 
+	derivedUsersResources, err := users_features.Derive(handlers.usersHandlers)
+	if err != nil {
+		return nil, err
+	}
+
 	return &Resources{
-		authResources: derivedAuthResources,
+		authResources:  derivedAuthResources,
+		usersResources: derivedUsersResources,
 	}, nil
 }

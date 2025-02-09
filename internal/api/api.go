@@ -4,11 +4,13 @@ import (
 	"github.com/abyanmajid/matcha/email"
 	"github.com/abyanmajid/thorfinn/internal"
 	auth_features "github.com/abyanmajid/thorfinn/internal/api/auth"
+	users_features "github.com/abyanmajid/thorfinn/internal/api/users"
 	"github.com/abyanmajid/thorfinn/internal/database"
 )
 
 type ApiResources struct {
-	AuthResources *auth_features.DerivedAuthResources
+	AuthResources  *auth_features.DerivedAuthResources
+	UsersResources *users_features.DerivedUsersResources
 }
 
 type Utils struct {
@@ -26,6 +28,7 @@ func CreateApiResources(utils *Utils) (*ApiResources, error) {
 	}
 
 	return &ApiResources{
-		AuthResources: resources.authResources,
+		AuthResources:  resources.authResources,
+		UsersResources: resources.usersResources,
 	}, nil
 }

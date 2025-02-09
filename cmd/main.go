@@ -18,6 +18,8 @@ const (
 	AuthSendEmailVerificationPath = "/auth/send-email-verification"
 	AuthSendPasswordResetLinkPath = "/auth/send-password-reset-link"
 	AuthResetPasswordPath         = "/auth/reset-password"
+
+	UsersGetAllPath = "/users"
 )
 
 func main() {
@@ -53,6 +55,7 @@ func main() {
 		PackageVersion: "0.1.0",
 	})
 
+	// Authentication resources
 	app.Post(AuthRegisterPath, resources.AuthResources.Register)
 	app.Put(AuthVerifyEmailPath, resources.AuthResources.VerifyEmail)
 	app.Post(AuthLoginPath, resources.AuthResources.Login)
@@ -62,7 +65,9 @@ func main() {
 	app.Put(AuthResetPasswordPath, resources.AuthResources.ResetPassword)
 	// otp send
 	// otp verify
-	// get all users
+
+	// User management resources
+	app.Get(UsersGetAllPath, resources.UsersResources.GetAllUsers)
 	// get user
 	// update user
 	// delete user

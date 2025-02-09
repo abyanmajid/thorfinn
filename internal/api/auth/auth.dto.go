@@ -1,27 +1,5 @@
 package auth_features
 
-import (
-	"errors"
-	"net/http"
-
-	"github.com/abyanmajid/matcha/ctx"
-	"github.com/abyanmajid/thorfinn/internal/database"
-)
-
-func GenericError[T any]() *ctx.Response[T] {
-	return &ctx.Response[T]{
-		Error:      errors.New("an error occurred while processing your request"),
-		StatusCode: http.StatusInternalServerError,
-	}
-}
-
-func CustomError[T any](message string) *ctx.Response[T] {
-	return &ctx.Response[T]{
-		Error:      errors.New(message),
-		StatusCode: http.StatusInternalServerError,
-	}
-}
-
 type RegisterRequest struct {
 	Email           string `json:"email"`
 	Password        string `json:"password"`
@@ -95,59 +73,5 @@ type OtpVerifyRequest struct {
 }
 
 type OtpVerifyResponse struct {
-	Message string `json:"message"`
-}
-
-type GetSelfRequest struct{}
-
-type GetSelfResponse struct {
-	Message string `json:"message"`
-}
-
-type UpdateSelfRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type UpdateSelfResponse struct {
-	Message string `json:"message"`
-}
-
-type DeleteSelfRequest struct {
-	Password string `json:"password"`
-}
-
-type DeleteSelfResponse struct {
-	Message string `json:"message"`
-}
-
-type GetAllUsersRequest struct{}
-
-type GetAllUsersResponse struct {
-	Message string                  `json:"message"`
-	Users   []database.ThorfinnUser `json:"users"`
-}
-
-type GetUserRequest struct {
-	ID string `json:"id"`
-}
-
-type GetUserResponse struct {
-	Message string `json:"message"`
-}
-
-type UpdateUserRequest struct {
-	ID string `json:"id"`
-}
-
-type UpdateUserResponse struct {
-	Message string `json:"message"`
-}
-
-type DeleteUserRequest struct {
-	ID string `json:"id"`
-}
-
-type DeleteUserResponse struct {
 	Message string `json:"message"`
 }

@@ -7,6 +7,8 @@ package database
 
 import (
 	"context"
+
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 const createUser = `-- name: CreateUser :one
@@ -82,22 +84,32 @@ func (q *Queries) FindUserById(ctx context.Context, id string) (ThorfinnUser, er
 }
 
 const listUsers = `-- name: ListUsers :many
-SELECT id, email, password_hash, verified, two_factor_enabled, created_at, updated_at FROM thorfinn_users ORDER BY created_at DESC
+SELECT id, email, verified, two_factor_enabled, created_at, updated_at
+FROM thorfinn_users
+ORDER BY created_at DESC
 `
 
-func (q *Queries) ListUsers(ctx context.Context) ([]ThorfinnUser, error) {
+type ListUsersRow struct {
+	ID               string
+	Email            string
+	Verified         bool
+	TwoFactorEnabled bool
+	CreatedAt        pgtype.Timestamptz
+	UpdatedAt        pgtype.Timestamptz
+}
+
+func (q *Queries) ListUsers(ctx context.Context) ([]ListUsersRow, error) {
 	rows, err := q.db.Query(ctx, listUsers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []ThorfinnUser
+	var items []ListUsersRow
 	for rows.Next() {
-		var i ThorfinnUser
+		var i ListUsersRow
 		if err := rows.Scan(
 			&i.ID,
 			&i.Email,
-			&i.PasswordHash,
 			&i.Verified,
 			&i.TwoFactorEnabled,
 			&i.CreatedAt,
