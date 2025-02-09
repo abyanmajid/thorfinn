@@ -31,10 +31,6 @@ func NewHandlers(isDev bool, config *internal.EnvConfig, queries *database.Queri
 	}
 }
 
-const (
-	RegisterSuccessMessage = "If this email is not already in use, you will receive a confirmation email shortly."
-)
-
 func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[RegisterResponse] {
 	logger.Info("Invoked: Register")
 
@@ -96,7 +92,7 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 
 	return &ctx.Response[RegisterResponse]{
 		Response: RegisterResponse{
-			Message: RegisterSuccessMessage,
+			Message: "If this email is not already in use, you will receive a confirmation email shortly.",
 		},
 		StatusCode: http.StatusCreated,
 		Error:      nil,
@@ -152,7 +148,7 @@ func (h *AuthHandlers) VerifyEmail(c *ctx.Request[ConfirmEmailRequest]) *ctx.Res
 
 	return &ctx.Response[ConfirmEmailResponse]{
 		Response: ConfirmEmailResponse{
-			Message: "Email confirmed",
+			Message: "Email has been verified",
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,
@@ -222,46 +218,92 @@ func (h *AuthHandlers) Logout(c *ctx.Request[LogoutRequest]) *ctx.Response[Logou
 	}
 }
 
-func (h *AuthHandlers) SendVerificationEmail(c *ctx.Request[SendVerificationEmailRequest]) *ctx.Response[SendVerificationEmailResponse] {
+func (h *AuthHandlers) SendEmailVerification(c *ctx.Request[SendVerificationEmailRequest]) *ctx.Response[SendVerificationEmailResponse] {
 	logger.Info("Invoked: SendVerificationEmail")
 
 	logger.Debug("Finding user by email")
 	user, err := h.queries.FindUserByEmail(c.Request.Context(), c.Body.Email)
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		logger.Error("Error finding user by email: %v", err)
 		return GenericError[SendVerificationEmailResponse]()
 	}
 
-	if user.Verified {
-		logger.Error("User is already verified")
-		return CustomError[SendVerificationEmailResponse]("user is already verified")
-	}
+	if !errors.Is(err, sql.ErrNoRows) {
+		if user.Verified {
+			logger.Error("User is already verified")
+			return CustomError[SendVerificationEmailResponse]("user is already verified")
+		}
 
-	logger.Debug("Creating verification link")
-	verificationLink, err := createVerificationLink(VerificationLinkOpts[SendVerificationEmailRequest]{
-		Request: c,
-		Config:  h.config,
-		UserId:  user.ID,
-		Path:    "auth/verify-email",
-	})
+		logger.Debug("Creating verification link")
+		verificationLink, err := createVerificationLink(VerificationLinkOpts[SendVerificationEmailRequest]{
+			Request: c,
+			Config:  h.config,
+			UserId:  user.ID,
+			Path:    "auth/verify-email",
+		})
 
-	if err != nil {
-		logger.Error("Error creating verification link: %v", err)
-		return GenericError[SendVerificationEmailResponse]()
-	}
+		if err != nil {
+			logger.Error("Error creating verification link: %v", err)
+			return GenericError[SendVerificationEmailResponse]()
+		}
 
-	err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Email Verification", "email_verification", map[string]any{
-		"VerificationLink": verificationLink,
-	})
+		err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Email Verification", "email_verification", map[string]any{
+			"VerificationLink": verificationLink,
+		})
 
-	if err != nil {
-		logger.Error("Error sending email verification email: %v", err)
-		return GenericError[SendVerificationEmailResponse]()
+		if err != nil {
+			logger.Error("Error sending email verification email: %v", err)
+			return GenericError[SendVerificationEmailResponse]()
+		}
 	}
 
 	return &ctx.Response[SendVerificationEmailResponse]{
 		Response: SendVerificationEmailResponse{
-			Message: "Email verification email sent",
+			Message: "If this user exists, you will receive a verification email shortly.",
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
+
+func (h *AuthHandlers) SendPasswordResetLink(c *ctx.Request[SendPasswordResetRequest]) *ctx.Response[SendPasswordResetResponse] {
+	logger.Info("Invoked: SendPasswordResetVerification")
+
+	logger.Debug("Finding user by email")
+	user, err := h.queries.FindUserByEmail(c.Request.Context(), c.Body.Email)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		logger.Error("Error finding user by email: %v", err)
+		return GenericError[SendPasswordResetResponse]()
+	}
+
+	if !errors.Is(err, sql.ErrNoRows) {
+
+		logger.Debug("Creating verification link")
+		verificationLink, err := createVerificationLink(VerificationLinkOpts[SendPasswordResetRequest]{
+			Request: c,
+			Config:  h.config,
+			UserId:  user.ID,
+			Path:    "auth/reset-password",
+		})
+
+		if err != nil {
+			logger.Error("Error creating verification link: %v", err)
+			return GenericError[SendPasswordResetResponse]()
+		}
+
+		err = h.mailer.SendEmail(h.config.EmailFrom, []string{c.Body.Email}, "Password Reset", "password_reset_verification", map[string]any{
+			"VerificationLink": verificationLink,
+		})
+
+		if err != nil {
+			logger.Error("Error sending password reset verification email: %v", err)
+			return GenericError[SendPasswordResetResponse]()
+		}
+	}
+
+	return &ctx.Response[SendPasswordResetResponse]{
+		Response: SendPasswordResetResponse{
+			Message: "If this user exists, you will receive a password reset email shortly.",
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,

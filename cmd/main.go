@@ -16,6 +16,7 @@ const (
 	AuthLoginPath             = "/auth/login"
 	AuthLogoutPath            = "/auth/logout"
 	AuthSendEmailVerification = "/auth/send-email-verification"
+	AuthSendPasswordResetLink = "/auth/send-password-reset-link"
 )
 
 func main() {
@@ -56,9 +57,9 @@ func main() {
 	app.Post(AuthLoginPath, resources.AuthResources.Login)
 	app.Post(AuthLogoutPath, resources.AuthResources.Logout)
 	app.Post(AuthSendEmailVerification, resources.AuthResources.SendEmailVerification)
-	// send verification email
+	app.Post(AuthSendPasswordResetLink, resources.AuthResources.SendPasswordResetLink)
 	// send password reset email
-	// password reset
+	// reset password
 	// otp send
 	// otp verify
 	// get self

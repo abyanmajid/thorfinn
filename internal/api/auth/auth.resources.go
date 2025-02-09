@@ -163,7 +163,37 @@ func (r *AuthResources) SendEmailVerificationResource() (*openapi.Resource, erro
 		},
 	}
 
-	resource := openapi.NewResource("SendEmailVerification", doc, r.handlers.SendVerificationEmail)
+	resource := openapi.NewResource("SendEmailVerification", doc, r.handlers.SendEmailVerification)
+
+	return &resource, nil
+}
+
+func (r *AuthResources) SendPasswordResetLinkResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(SendPasswordResetRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(SendPasswordResetResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Send a password reset link",
+		Description: "Send a password reset link to the user",
+		Schema: openapi.Schema{
+			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "Password reset link sent",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("SendPasswordResetLink", doc, r.handlers.SendPasswordResetLink)
 
 	return &resource, nil
 }
