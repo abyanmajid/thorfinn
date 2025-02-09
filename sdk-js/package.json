@@ -1,0 +1,17 @@
+{
+  "name": "thorfinn-sdk",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "private": "false",
+  "types": "types/index.d.ts",
+  "description": "The JavaScript client SDK for Thorfinn",
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "author": "abyanmajid",
+  "license": "GPL-3.0-only",
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
