@@ -19,7 +19,10 @@ type GetUserResponse struct {
 }
 
 type UpdateUserRequest struct {
-	ID string `json:"id"`
+	Email            *string `json:"email,omitempty"`
+	Password         *string `json:"password,omitempty"`
+	Verified         *bool   `json:"verified,omitempty"`
+	TwoFactorEnabled *bool   `json:"two_factor_enabled,omitempty"`
 }
 
 type UpdateUserResponse struct {

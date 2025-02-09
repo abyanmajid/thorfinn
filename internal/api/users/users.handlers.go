@@ -67,3 +67,57 @@ func (h *UsersHandlers) GetUser(c *ctx.Request[GetUserRequest]) *ctx.Response[Ge
 		Error:      nil,
 	}
 }
+
+func (h *UsersHandlers) UpdateUser(c *ctx.Request[UpdateUserRequest]) *ctx.Response[UpdateUserResponse] {
+	logger.Info("Invoked: UpdateUser")
+
+	userId := c.GetPathParam("id")
+
+	logger.Debug("Fetching existing user details")
+	existingUser, err := h.queries.FindUserById(c.Request.Context(), userId)
+	if err != nil {
+		logger.Error("Error getting user: %v", err)
+		return internal.GenericError[UpdateUserResponse]()
+	}
+
+	email := existingUser.Email
+	if c.Body.Email != nil {
+		email = *c.Body.Email
+	}
+
+	password := existingUser.PasswordHash
+	if c.Body.Password != nil {
+		password = *c.Body.Password
+	}
+
+	verified := existingUser.Verified
+	if c.Body.Verified != nil {
+		verified = *c.Body.Verified
+	}
+
+	twoFactorEnabled := existingUser.TwoFactorEnabled
+	if c.Body.TwoFactorEnabled != nil {
+		twoFactorEnabled = *c.Body.TwoFactorEnabled
+	}
+
+	logger.Debug("Updating user")
+	_, err = h.queries.UpdateUser(c.Request.Context(), database.UpdateUserParams{
+		ID:               userId,
+		Email:            email,
+		PasswordHash:     password,
+		Verified:         verified,
+		TwoFactorEnabled: twoFactorEnabled,
+	})
+	if err != nil {
+		logger.Error("Error updating user: %v", err)
+		return internal.GenericError[UpdateUserResponse]()
+	}
+
+	return &ctx.Response[UpdateUserResponse]{
+		Response: UpdateUserResponse{
+			Message: "Successfully updated user",
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}

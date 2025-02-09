@@ -125,6 +125,42 @@ func (q *Queries) ListUsers(ctx context.Context) ([]ListUsersRow, error) {
 	return items, nil
 }
 
+const updateUser = `-- name: UpdateUser :one
+UPDATE thorfinn_users
+SET email = $2, password_hash = $3, verified = $4, two_factor_enabled = $5
+WHERE id = $1
+RETURNING id, email, password_hash, verified, two_factor_enabled, created_at, updated_at
+`
+
+type UpdateUserParams struct {
+	ID               string
+	Email            string
+	PasswordHash     string
+	Verified         bool
+	TwoFactorEnabled bool
+}
+
+func (q *Queries) UpdateUser(ctx context.Context, arg UpdateUserParams) (ThorfinnUser, error) {
+	row := q.db.QueryRow(ctx, updateUser,
+		arg.ID,
+		arg.Email,
+		arg.PasswordHash,
+		arg.Verified,
+		arg.TwoFactorEnabled,
+	)
+	var i ThorfinnUser
+	err := row.Scan(
+		&i.ID,
+		&i.Email,
+		&i.PasswordHash,
+		&i.Verified,
+		&i.TwoFactorEnabled,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
 const updateUserPassword = `-- name: UpdateUserPassword :one
 UPDATE thorfinn_users
 SET password_hash = $2

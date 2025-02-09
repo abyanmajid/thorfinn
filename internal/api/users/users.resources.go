@@ -79,3 +79,35 @@ func (r *UsersResources) GetUserResource() (*openapi.Resource, error) {
 
 	return &resource, nil
 }
+
+func (r *UsersResources) UpdateUserResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(UpdateUserRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(UpdateUserResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Update user",
+		Description: "Update user",
+		Schema: openapi.Schema{
+			RequestBody: openapi.RequestBody{
+				Content: openapi.Json(requestSchema),
+			},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "Successfully updated user",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("UpdateUser", doc, r.handlers.UpdateUser)
+
+	return &resource, nil
+}

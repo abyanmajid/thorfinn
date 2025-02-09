@@ -21,6 +21,7 @@ const (
 
 	UsersGetAllPath = "/users"
 	UsersGetPath    = "/users/{id}"
+	UsersUpdatePath = "/users/{id}"
 )
 
 func main() {
@@ -70,7 +71,7 @@ func main() {
 	// User management resources
 	app.Get(UsersGetAllPath, resources.UsersResources.GetAllUsers)
 	app.Get(UsersGetPath, resources.UsersResources.GetUser)
-	// update user
+	app.Put(UsersUpdatePath, resources.UsersResources.UpdateUser)
 	// delete user
 
 	app.Reference("/reference", &reference.Options{

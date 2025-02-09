@@ -25,5 +25,11 @@ SET password_hash = $2
 WHERE id = $1
 RETURNING *;
 
+-- name: UpdateUser :one
+UPDATE thorfinn_users
+SET email = $2, password_hash = $3, verified = $4, two_factor_enabled = $5
+WHERE id = $1
+RETURNING *;
+
 -- name: DeleteUser :exec
 DELETE FROM thorfinn_users WHERE id = $1;
