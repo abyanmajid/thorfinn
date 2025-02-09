@@ -39,10 +39,6 @@ func (r *AuthResources) RegisterResource() (*openapi.Resource, error) {
 					Description: "Please check your email for a verification link",
 					Content:     openapi.Json(responseSchema),
 				},
-				http.StatusUnauthorized: {
-					Description: "Invalid credentials.",
-					Content:     openapi.Json(openapi.SimpleErrorSchema()),
-				},
 			},
 		},
 	}
@@ -67,9 +63,6 @@ func (r *AuthResources) ConfirmEmailResource() (*openapi.Resource, error) {
 		Summary:     "Verify email",
 		Description: "Verify email",
 		Schema: openapi.Schema{
-			Parameters: []openapi.Parameter{
-				openapi.Param.Path("token", "The verification token"),
-			},
 			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
 			Responses: map[int]openapi.Response{
 				http.StatusOK: {
@@ -81,6 +74,36 @@ func (r *AuthResources) ConfirmEmailResource() (*openapi.Resource, error) {
 	}
 
 	resource := openapi.NewResource("VerifyEmail", doc, r.handlers.VerifyEmail)
+
+	return &resource, nil
+}
+
+func (r *AuthResources) LoginResource() (*openapi.Resource, error) {
+	requestSchema, err := openapi.NewSchema(LoginRequest{})
+	if err != nil {
+		return nil, err
+	}
+
+	responseSchema, err := openapi.NewSchema(LoginResponse{})
+	if err != nil {
+		return nil, err
+	}
+
+	doc := openapi.ResourceDoc{
+		Summary:     "Login",
+		Description: "Login",
+		Schema: openapi.Schema{
+			RequestBody: openapi.RequestBody{Content: openapi.Json(requestSchema)},
+			Responses: map[int]openapi.Response{
+				http.StatusOK: {
+					Description: "Login successful",
+					Content:     openapi.Json(responseSchema),
+				},
+			},
+		},
+	}
+
+	resource := openapi.NewResource("Login", doc, r.handlers.Login)
 
 	return &resource, nil
 }

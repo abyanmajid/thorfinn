@@ -5,6 +5,7 @@ import "github.com/abyanmajid/matcha/openapi"
 type DerivedAuthResources struct {
 	Register    *openapi.Resource
 	VerifyEmail *openapi.Resource
+	Login       *openapi.Resource
 }
 
 func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
@@ -19,8 +20,14 @@ func Derive(handlers *AuthHandlers) (*DerivedAuthResources, error) {
 		return nil, err
 	}
 
+	loginResource, err := authResources.LoginResource()
+	if err != nil {
+		return nil, err
+	}
+
 	return &DerivedAuthResources{
 		Register:    registerResource,
 		VerifyEmail: confirmEmailResource,
+		Login:       loginResource,
 	}, nil
 }

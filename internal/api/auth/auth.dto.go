@@ -31,8 +31,19 @@ type RegisterResponse struct {
 	Message string `json:"message"`
 }
 
-type ConfirmEmailRequest struct{}
+type ConfirmEmailRequest struct {
+	Token string `json:"token"`
+}
 
 type ConfirmEmailResponse struct {
 	Message string `json:"message"`
+}
+
+type LoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+type LoginResponse struct {
+	AccessToken string `json:"access_token"`
 }

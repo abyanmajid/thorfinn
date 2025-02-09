@@ -117,14 +117,13 @@ func (h *AuthHandlers) Register(c *ctx.Request[RegisterRequest]) *ctx.Response[R
 func (h *AuthHandlers) VerifyEmail(c *ctx.Request[ConfirmEmailRequest]) *ctx.Response[ConfirmEmailResponse] {
 	logger.Info("Invoked: VerifyEmail")
 
-	urlSafeToken := c.GetQueryParam("token")
-	if urlSafeToken == "" {
+	if c.Body.Token == "" {
 		logger.Error("Token not found")
 		return CustomError[ConfirmEmailResponse]("token not found")
 	}
 
 	logger.Debug("Decoding token")
-	encryptedToken, err := security.DecodeBase64(urlSafeToken)
+	encryptedToken, err := security.DecodeBase64(c.Body.Token)
 	if err != nil {
 		logger.Error("Error decoding token: %v", err)
 		return GenericError[ConfirmEmailResponse]()
@@ -165,6 +164,18 @@ func (h *AuthHandlers) VerifyEmail(c *ctx.Request[ConfirmEmailRequest]) *ctx.Res
 	return &ctx.Response[ConfirmEmailResponse]{
 		Response: ConfirmEmailResponse{
 			Message: "Email confirmed",
+		},
+		StatusCode: http.StatusOK,
+		Error:      nil,
+	}
+}
+
+func (h *AuthHandlers) Login(c *ctx.Request[LoginRequest]) *ctx.Response[LoginResponse] {
+	logger.Info("Invoked: Login")
+
+	return &ctx.Response[LoginResponse]{
+		Response: LoginResponse{
+			AccessToken: "access_token",
 		},
 		StatusCode: http.StatusOK,
 		Error:      nil,

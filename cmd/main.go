@@ -10,6 +10,12 @@ import (
 	"github.com/abyanmajid/thorfinn/internal/api"
 )
 
+const (
+	AuthRegisterPath    = "/auth/register"
+	AuthVerifyEmailPath = "/auth/verify-email"
+	AuthLoginPath       = "/auth/login"
+)
+
 func main() {
 	config := internal.ConfigureEnv()
 
@@ -42,8 +48,21 @@ func main() {
 		PackageVersion: "0.1.0",
 	})
 
-	app.Post("/auth/register", resources.AuthResources.Register)
-	app.Put("/auth/verify-email", resources.AuthResources.VerifyEmail)
+	app.Post(AuthRegisterPath, resources.AuthResources.Register)
+	app.Put(AuthVerifyEmailPath, resources.AuthResources.VerifyEmail)
+	app.Post(AuthLoginPath, resources.AuthResources.Login)
+	// logout
+	// password reset
+	// resend verification email
+	// otp activate
+	// otp send
+	// otp verify
+	// get self
+	// update self
+	// delete self
+	// get specific user
+	// update specific user
+	// delete specific user
 
 	app.Reference("/reference", &reference.Options{
 		Source: "/docs",
